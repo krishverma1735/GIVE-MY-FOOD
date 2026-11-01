@@ -96,6 +96,11 @@
 
             <!-- Action Buttons: Kitchen Portal + Help & Support + Founder Hub -->
             <div class="flex items-center space-x-1.5 sm:space-x-2">
+                <button onclick="openShareQrModal()" class="px-2.5 sm:px-3 py-2 rounded-xl bg-brand-500/15 hover:bg-brand-500/25 text-brand-300 border border-brand-500/30 text-xs font-extrabold flex items-center space-x-1.5 transition" title="Share Live App Link & Hostel QR Code">
+                    <i class="fa-solid fa-qrcode text-brand-400"></i>
+                    <span class="hidden sm:inline">Share QR</span>
+                </button>
+
                 <button onclick="handleKitchenAccess()" class="px-2.5 sm:px-3 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-extrabold flex items-center space-x-1.5 transition" title="Restaurant Counter Login for Sachin Singh (PIN: 6393)">
                     <i class="fa-solid fa-kitchen-set text-emerald-400"></i>
                     <span>Kitchen App</span>
@@ -267,7 +272,7 @@
             </div>
 
             <!-- Partner Kitchen Selector Cards + Coming Soon Card -->
-            <div class="mb-5">
+            <div class="mb-4">
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-xs font-extrabold uppercase tracking-wider text-gray-400">Choose Restaurant Near CULKO</h3>
                     <span class="text-xs text-brand-400 font-semibold" id="restaurantCountBadge">1 Kitchen Live • More Coming Soon</span>
@@ -350,8 +355,31 @@
                 <!-- Explainer Box Answering "What is Founder Hub?" -->
                 <div class="p-3.5 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 text-xs text-indigo-100 leading-relaxed">
                     <p class="font-extrabold text-indigo-300 mb-1"><i class="fa-solid fa-lock mr-1.5"></i>Your Secret 6-Digit PIN is <span class="underline">827117</span> (Only for Krish Kumar)</p>
-                    <p>Here you control your entire college startup: <strong>(1)</strong> Track 100% Pre-Paid Online Orders & your <strong>3%–5% commission</strong>, <strong>(2)</strong> Configure the <strong>UPI ID</strong> where students pay before ordering, <strong>(3)</strong> View callback tickets from students, and <strong>(4)</strong> Add more restaurants as you expand towards LPU & CULKO.</p>
+                    <p>Here you control your entire college startup: <strong>(1)</strong> Track 100% Pre-Paid Online Orders & your <strong>3%–5% commission</strong>, <strong>(2)</strong> Configure the <strong>UPI ID</strong> where students pay before ordering, <strong>(3)</strong> View callback tickets from students, and <strong>(4)</strong> Share your live link: <a href="https://krishverma1735.github.io/GIVE-MY-FOOD/" target="_blank" class="text-emerald-400 underline font-extrabold">krishverma1735.github.io/GIVE-MY-FOOD/</a></p>
                 </div>
+            </div>
+
+            <!-- Live Website Link & Hostel QR Code Card -->
+            <div class="p-5 rounded-2xl bg-gray-900 border border-brand-500/40 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="space-y-1.5">
+                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase">
+                        ● Live on GitHub Pages
+                    </span>
+                    <h3 class="text-sm sm:text-base font-black text-white">Your Official Live Website Link is Ready!</h3>
+                    <p class="text-xs text-brand-400 font-bold break-all select-all">https://krishverma1735.github.io/GIVE-MY-FOOD/</p>
+                    <p class="text-xs text-gray-400">Share this link in CULKO hostel WhatsApp groups or print the QR poster to stick in hostels & your 8-room flat.</p>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <button onclick="copyLiveAppUrl()" class="px-3.5 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-white text-xs font-extrabold flex items-center space-x-1.5">
+                            <i class="fa-regular fa-copy text-brand-400"></i>
+                            <span>Copy Live Link</span>
+                        </button>
+                        <button onclick="openShareQrModal()" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-extrabold flex items-center space-x-1.5">
+                            <i class="fa-solid fa-qrcode"></i>
+                            <span>Open Hostel QR Poster</span>
+                        </button>
+                    </div>
+                </div>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https%3A%2F%2Fkrishverma1735.github.io%2FGIVE-MY-FOOD%2F" alt="Give My Food Live QR" class="w-28 h-28 rounded-2xl bg-white p-2 border-2 border-brand-500 flex-shrink-0">
             </div>
 
             <!-- UPI Pre-Payment & Kitchen PIN Settings Card -->
@@ -918,6 +946,41 @@
     </div>
 
     <!-- ========================================== -->
+    <!-- SHARE LIVE LINK & HOSTEL QR POSTER MODAL   -->
+    <!-- ========================================== -->
+    <div id="shareQrModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-gray-900 border-2 border-brand-500/50 w-full max-w-sm rounded-3xl p-5 text-center animate-slide-up">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                <span class="text-xs font-black uppercase tracking-wider text-brand-400"><i class="fa-solid fa-bolt mr-1"></i>Official Campus QR Poster</span>
+                <button onclick="closeShareQrModal()" class="w-7 h-7 rounded-full bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="my-4 p-4 rounded-2xl bg-gradient-to-b from-brand-700/30 to-gray-950 border border-brand-500/30">
+                <h3 class="text-lg font-black text-white">Give My <span class="text-brand-500">Food</span></h3>
+                <p class="text-[11px] text-amber-300 font-bold mt-0.5">Shahi Veg & Nonveg • Free Delivery ≥ ₹250</p>
+                <div class="my-3 inline-block p-3 rounded-2xl bg-white shadow-xl">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fkrishverma1735.github.io%2FGIVE-MY-FOOD%2F" alt="Scan to Order Food" class="w-44 h-44 mx-auto">
+                </div>
+                <p class="text-[11px] text-gray-200 font-extrabold">Scan QR to Order Hot Food to Your Hostel (12 PM – 10 PM)</p>
+                <p class="text-[10px] text-brand-400 font-mono mt-1 break-all select-all">https://krishverma1735.github.io/GIVE-MY-FOOD/</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="copyLiveAppUrl()" class="py-2.5 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white text-xs font-extrabold flex items-center justify-center space-x-1.5">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copy Link</span>
+                </button>
+                <a href="https://wa.me/?text=🍔%20*Order%20Hot%20Food%20from%20Shahi%20Veg%20%26%20Nonveg%20to%20CULKO%20Hostel!*%0A✅%20*FREE%20Delivery%20on%20orders%20₹250+*%20(Pamphlet%20minimum%20is%20₹499!)%0A🕛%20Live%2012%20PM%20to%2010%20PM%0A👇%20*Tap%20link%20to%20order%20now:*%0Ahttps://krishverma1735.github.io/GIVE-MY-FOOD/" target="_blank" rel="noopener noreferrer" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold flex items-center justify-center space-x-1.5">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span>Share on WhatsApp</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
     <!-- CUSTOM TOAST / MESSAGE DIALOG              -->
     <!-- ========================================== -->
     <div id="toastBox" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden max-w-md w-[92%]">
@@ -942,6 +1005,7 @@
         const SUPPORT_OWNER_PHONE = "8825293104";
         const ADMIN_PIN = "827117"; // Updated 6-Digit Private PIN for Krish Kumar
         const KITCHEN_PIN = "6393"; // Easy 4-Digit Counter PIN for Sachin Singh (first 4 digits of 6393734006)
+        const LIVE_APP_URL = "https://krishverma1735.github.io/GIVE-MY-FOOD/";
         const DATA_VERSION = "shahi_v3";
 
         // Primary Featured Restaurant from Uploaded Menu Card: "Shahi Veg and Nonveg"
@@ -2216,6 +2280,29 @@ _Please call the student on ${customerPhone} (Support Call Window: 5:00 PM – 3
             const modal = document.getElementById('termsModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
+        }
+
+        // --- SHARE LIVE LINK & HOSTEL QR POSTER MODAL ---
+        function openShareQrModal() {
+            const modal = document.getElementById('shareQrModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeShareQrModal() {
+            const modal = document.getElementById('shareQrModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copyLiveAppUrl() {
+            const tempInput = document.createElement('input');
+            tempInput.value = LIVE_APP_URL;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('Live Link Copied!', `${LIVE_APP_URL} copied! Paste it in your hostel WhatsApp groups.`, 'success');
         }
 
         // --- FOUNDER HUB & PIN ACCESS ---
