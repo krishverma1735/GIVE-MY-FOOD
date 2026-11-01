@@ -1769,15 +1769,15 @@
 
             const orderOpen = isOrderingWindowOpen();
             document.getElementById('activeRestaurantBanner').innerHTML = `
-                <div>
+                <div class="min-w-0 flex-1">
                     <div class="flex flex-wrap items-center gap-2">
-                        <h2 class="text-base sm:text-lg font-black text-white">${currentRest.name}</h2>
-                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">${currentRest.prepTime || '25-35 mins'}</span>
+                        <h2 class="text-base sm:text-lg font-black text-white truncate">${currentRest.name}</h2>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex-shrink-0">${currentRest.prepTime || '25-35 mins'}</span>
                     </div>
-                    <p class="text-xs text-amber-300 font-semibold mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${currentRest.location || 'Bhalla Farm, Kanpur Lucknow Road'}</p>
-                    <p class="text-xs text-gray-400 mt-0.5">${currentRest.tagline}</p>
+                    <p class="text-xs text-amber-300 font-semibold mt-0.5 break-words leading-relaxed"><i class="fa-solid fa-location-dot mr-1"></i>${currentRest.location || 'Bhalla Farm, Kanpur Lucknow Road'}</p>
+                    <p class="text-xs text-gray-400 mt-0.5 break-words">${currentRest.tagline}</p>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 text-xs">
+                <div class="flex flex-wrap items-center gap-2 text-xs flex-shrink-0">
                     <div class="text-right hidden md:block">
                         <span class="text-gray-300 font-bold block">Owner: ${currentRest.ownerName}</span>
                         <span class="text-[10px] ${orderOpen ? 'text-emerald-400' : 'text-amber-300'} font-bold">${orderOpen ? '● Available Now for Delivery' : '● Available 12:00 PM – 10:00 PM'}</span>
