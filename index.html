@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Give My Food | Shahi Veg & Nonveg Nawabganj Delivery (12 PM – 10 PM)</title>
+    <title>Give My Food | Shahi Veg and Nonveg (Nawabganj) Delivery</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Pure JS QR Code Generator (100% Offline & Instant Scannable QR) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -22,10 +23,13 @@
                         brand: {
                             50: '#fff7ed',
                             100: '#ffedd5',
-                            400: '#fb923c',
                             500: '#f97316',
                             600: '#ea580c',
                             700: '#c2410c',
+                        },
+                        matte: {
+                            900: '#090d16',
+                            800: '#111827',
                         }
                     }
                 }
@@ -35,8 +39,8 @@
     <style>
         html, body {
             font-family: 'Inter', sans-serif;
-            background-color: #0b0d13;
-            color: #f3f4f6;
+            background-color: #f8fafc;
+            color: #0f172a;
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
             max-width: 100vw;
@@ -55,268 +59,172 @@
         .animate-slide-up {
             animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+        @keyframes pulseRing {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .pulse-green {
+            animation: pulseRing 2s infinite;
+        }
     </style>
 </head>
-<body class="min-h-screen pb-36 selection:bg-brand-500 selection:text-white flex flex-col w-full overflow-x-hidden">
+<body class="min-h-screen pb-36 flex flex-col w-full overflow-x-hidden selection:bg-matte-900 selection:text-white">
 
     <!-- ========================================== -->
     <!-- MANDATORY USER LOGIN OVERLAY GATE          -->
     <!-- ========================================== -->
-    <div id="userLoginGate" class="fixed inset-0 z-50 bg-gray-950/95 backdrop-blur-xl hidden items-center justify-center p-4">
-        <div class="bg-gray-900 border border-brand-500/40 w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center animate-slide-up">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-rose-600 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-brand-500/30">
-                <i class="fa-solid fa-utensils text-white text-2xl"></i>
+    <div id="userLoginGate" class="fixed inset-0 z-50 bg-matte-900/90 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center animate-slide-up">
+            <div class="w-14 h-14 rounded-2xl bg-matte-900 flex items-center justify-center mx-auto mb-3 shadow-lg">
+                <i class="fa-solid fa-utensils text-brand-500 text-2xl"></i>
             </div>
-            <span class="px-2.5 py-0.5 rounded-full bg-brand-500/15 text-brand-400 border border-brand-500/30 text-[10px] font-black uppercase">
-                Nawabganj & CULKO Delivery
+            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-300 text-[10px] font-black uppercase tracking-wider">
+                Official Nawabganj Delivery
             </span>
-            <h2 class="text-xl font-black text-white mt-2">Welcome to Give My <span class="text-brand-500">Food</span></h2>
-            <p class="text-xs text-gray-400 mt-1 mb-5">Please login with your Name & Mobile Number to view the menu and place orders.</p>
+            <h2 class="text-xl font-black text-slate-900 mt-2">Welcome to Give My <span class="text-brand-600">Food</span></h2>
+            <p class="text-xs text-slate-500 mt-1 mb-5">Enter your Name & Mobile Number to browse the menu and order hot food.</p>
 
             <form onsubmit="handleUserLogin(event)" class="space-y-3 text-left">
                 <div>
-                    <label class="text-[11px] font-bold text-gray-300 block mb-1">Your Full Name *</label>
-                    <input type="text" id="loginUserName" required placeholder="e.g. Aman Verma" class="w-full px-3.5 py-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:border-brand-500 focus:outline-none">
+                    <label class="text-[11px] font-extrabold text-slate-700 block mb-1">Your Full Name *</label>
+                    <input type="text" id="loginUserName" required placeholder="e.g. Aman Verma" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
                 </div>
                 <div>
-                    <label class="text-[11px] font-bold text-gray-300 block mb-1">10-Digit Mobile Number *</label>
-                    <input type="tel" id="loginUserPhone" required pattern="[0-9]{10}" maxlength="10" placeholder="Enter 10-digit mobile number" class="w-full px-3.5 py-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:border-brand-500 focus:outline-none">
+                    <label class="text-[11px] font-extrabold text-slate-700 block mb-1">10-Digit Mobile Number *</label>
+                    <input type="tel" id="loginUserPhone" required pattern="[0-9]{10}" maxlength="10" placeholder="Enter 10-digit mobile number" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
                 </div>
-                <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-200">
-                    <i class="fa-solid fa-location-dot text-amber-400 mr-1"></i><strong>Note:</strong> Delivery is strictly available inside <strong>Nawabganj</strong> area only. Min Order: <strong>₹100</strong>.
-                </div>
-                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-500 to-rose-600 hover:from-brand-600 hover:to-rose-700 text-white font-black text-xs sm:text-sm shadow-lg shadow-brand-500/25 transition">
-                    Login & Continue to Menu <i class="fa-solid fa-arrow-right ml-1"></i>
+                <button type="submit" class="w-full py-3 rounded-xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm shadow-lg transition">
+                    Continue to Menu <i class="fa-solid fa-arrow-right ml-1 text-brand-500"></i>
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- LIVE OPERATING HOURS TOP STRIP -->
-    <div class="bg-gradient-to-r from-brand-700 via-brand-600 to-rose-600 text-white text-xs px-3 sm:px-4 py-2 w-full">
-        <div class="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center space-x-2 sm:space-x-3 font-bold">
-                <span class="flex items-center space-x-1.5">
-                    <span id="liveStatusDot" class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                    <span id="liveHoursBadge" class="text-[11px] sm:text-xs">DELIVERY HOURS: 12:00 PM – 10:00 PM</span>
-                </span>
+    <!-- ========================================== -->
+    <!-- MATTE BLACK TOP OPERATING STRIP            -->
+    <!-- ========================================== -->
+    <div class="bg-matte-900 text-white text-xs px-3 sm:px-4 py-2 w-full border-b border-slate-800">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
+            <div class="flex items-center space-x-2 font-bold">
+                <span id="liveStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="liveHoursBadge" class="text-[11px] tracking-wide text-slate-200">DELIVERY HOURS: 12:00 PM – 10:00 PM</span>
             </div>
             <div class="flex items-center space-x-3">
-                <button onclick="openTermsModal()" class="underline hover:text-orange-200 font-semibold text-[11px]">Terms & Conditions</button>
+                <button onclick="openActiveOrderModal()" id="topTrackOrderBtn" class="hidden bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold animate-pulse">
+                    <i class="fa-solid fa-satellite-dish mr-1"></i>Track Live Order
+                </button>
+                <button onclick="openTermsModal()" class="underline hover:text-brand-400 font-semibold text-[11px] text-slate-300">Terms & Rules</button>
             </div>
         </div>
     </div>
 
-    <!-- STICKY TOP NAVBAR -->
-    <header class="sticky top-0 z-30 backdrop-blur-xl bg-gray-950/90 border-b border-gray-800/80 w-full">
+    <!-- ========================================== -->
+    <!-- CLEAN MATTE BLACK & WHITE STICKY HEADER    -->
+    <!-- (NO VISIBLE ADMIN OR KITCHEN BUTTONS!)     -->
+    <!-- ========================================== -->
+    <header class="sticky top-0 z-30 bg-matte-900 text-white shadow-md w-full">
         <div class="max-w-4xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2">
             <!-- Brand Identity -->
             <div class="flex items-center space-x-2.5 min-w-0">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-rose-600 flex items-center justify-center shadow-lg shadow-brand-500/25 flex-shrink-0">
-                    <i class="fa-solid fa-utensils text-white text-base"></i>
+                <div class="w-10 h-10 rounded-2xl bg-white flex items-center justify-center shadow-sm flex-shrink-0">
+                    <i class="fa-solid fa-utensils text-matte-900 text-base"></i>
                 </div>
                 <div class="min-w-0">
                     <div class="flex items-center space-x-1.5">
                         <h1 class="text-base sm:text-xl font-black tracking-tight text-white truncate">Give My <span class="text-brand-500">Food</span></h1>
-                        <span id="headerOpenChip" class="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase flex-shrink-0">Open Now</span>
+                        <span id="headerOpenChip" class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase flex-shrink-0">Open Now</span>
                     </div>
-                    <p class="text-[10px] sm:text-[11px] text-gray-400 truncate">Min Order ₹100 • Free Delivery &gt; ₹250</p>
+                    <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Min Order ₹100 • Free Delivery &gt; ₹250</p>
                 </div>
             </div>
 
-            <!-- Action Buttons: User Profile + Kitchen + Help + Founder Hub -->
-            <div class="flex items-center space-x-1.5 flex-shrink-0">
-                <button onclick="openUserProfileModal()" id="navUserBtn" class="px-2.5 py-2 rounded-xl bg-gray-900 hover:bg-gray-800 text-gray-200 border border-gray-700 text-xs font-bold flex items-center space-x-1.5 transition" title="Logged in User">
-                    <i class="fa-solid fa-user-check text-emerald-400"></i>
-                    <span id="navUserNameText" class="max-w-[70px] truncate hidden sm:inline">Guest</span>
+            <!-- Clean Customer Actions Only: Live Order Status + Help & Support + User Profile -->
+            <div class="flex items-center space-x-2 flex-shrink-0">
+                <button onclick="openSupportModal()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs font-bold flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-headset text-brand-500"></i>
+                    <span>Help & Support</span>
                 </button>
 
-                <button onclick="handleKitchenAccess()" class="px-2.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-extrabold flex items-center space-x-1 transition" title="Restaurant Counter Login for Sachin Singh (PIN: 6393)">
-                    <i class="fa-solid fa-kitchen-set text-emerald-400"></i>
-                    <span class="hidden sm:inline">Kitchen</span>
+                <button onclick="openUserProfileModal()" id="navUserBtn" class="px-2.5 py-2 rounded-xl bg-white text-matte-900 hover:bg-slate-100 text-xs font-extrabold flex items-center space-x-1.5 transition shadow-sm" title="Your Profile">
+                    <i class="fa-solid fa-user-check text-emerald-600"></i>
+                    <span id="navUserNameText" class="max-w-[75px] truncate hidden sm:inline">Login</span>
                 </button>
+            </div>
+        </div>
 
-                <button onclick="openSupportModal()" class="px-2.5 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 text-xs font-bold flex items-center space-x-1 transition">
-                    <i class="fa-solid fa-headset text-rose-400"></i>
-                    <span class="hidden md:inline">Support</span>
-                </button>
-
-                <button id="adminToggleBtn" onclick="handleAdminAccess()" class="px-2.5 py-2 rounded-xl bg-gray-800/90 hover:bg-gray-700 text-xs font-bold text-gray-300 border border-gray-700 flex items-center space-x-1 transition" title="Krish Kumar's Private Admin & Commission Panel (PIN: 827117)">
-                    <i class="fa-solid fa-lock text-brand-400" id="adminLockIcon"></i>
-                </button>
+        <!-- Clean White Sub-Bar: Choose Restaurant Dropdown -->
+        <div class="bg-white text-slate-900 border-b border-slate-200 px-3 sm:px-4 py-2.5 w-full">
+            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full">
+                <div class="flex items-center space-x-2 w-full sm:w-auto min-w-0">
+                    <span class="text-[11px] font-black uppercase tracking-wider text-slate-500 flex items-center flex-shrink-0">
+                        <i class="fa-solid fa-store mr-1.5 text-matte-900"></i>Choose Restaurant:
+                    </span>
+                    <select id="topRestaurantDropdown" onchange="handleTopRestaurantSelect(this.value)" class="flex-1 min-w-0 w-full max-w-full truncate bg-slate-100 text-slate-900 text-xs font-extrabold px-3 py-1.5 rounded-xl border border-slate-300 focus:outline-none focus:border-matte-900 cursor-pointer">
+                        <!-- Populated via JS: Shahi Veg and Nonveg (Nawabganj) -->
+                    </select>
+                </div>
+                <div class="flex items-center justify-between sm:justify-end space-x-3 text-[11px] text-slate-600 font-bold">
+                    <span><i class="fa-solid fa-bag-shopping text-brand-600 mr-1"></i>Min ₹100</span>
+                    <span>•</span>
+                    <span><i class="fa-solid fa-truck-fast text-emerald-600 mr-1"></i>Free Delivery &gt; ₹250</span>
+                </div>
             </div>
         </div>
     </header>
-
-    <!-- PROMINENT TOP "CHOOSE RESTAURANT" SWITCHER BAR (FIXED MOBILE OVERFLOW) -->
-    <div class="bg-gray-900/95 border-b border-gray-800 px-3 sm:px-4 py-2.5 w-full">
-        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2 w-full">
-            <div class="flex items-center space-x-2 w-full sm:w-auto min-w-0">
-                <span class="text-[11px] font-black uppercase tracking-wider text-brand-400 flex items-center flex-shrink-0">
-                    <i class="fa-solid fa-utensils mr-1"></i>Kitchen:
-                </span>
-                <select id="topRestaurantDropdown" onchange="handleTopRestaurantSelect(this.value)" class="flex-1 min-w-0 w-full max-w-full truncate bg-gray-950 text-white text-xs font-extrabold px-2.5 py-1.5 rounded-xl border border-brand-500/50 focus:outline-none focus:border-brand-400 cursor-pointer">
-                    <!-- Populated via JS with short clean text so it never overflows mobile -->
-                </select>
-            </div>
-            <div class="flex items-center justify-between sm:justify-end space-x-2 text-[11px] w-full sm:w-auto">
-                <span class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-extrabold truncate">
-                    📍 Delivery Only in Nawabganj
-                </span>
-                <span id="cloudSyncIndicator" class="text-[10px] text-emerald-400 font-bold flex items-center flex-shrink-0">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1 animate-ping"></span>Live Sync
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <!-- CLOSED HOURS NOTICE BANNER -->
-    <div id="closedHoursBanner" class="hidden bg-amber-500/10 border-b border-amber-500/30 px-3 sm:px-4 py-2.5 w-full">
-        <div class="max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs text-amber-300">
-            <div class="flex items-center space-x-2">
-                <i class="fa-regular fa-clock text-amber-400 text-sm flex-shrink-0"></i>
-                <span><strong>Note:</strong> Regular delivery & Sachin Singh counter hours are <strong>12:00 PM to 10:00 PM</strong>.</span>
-            </div>
-            <span class="text-[11px] font-bold bg-amber-500/20 px-2 py-0.5 rounded-md">12 PM – 10 PM Daily</span>
-        </div>
-    </div>
 
     <!-- MAIN CONTENT CONTAINER -->
     <main class="max-w-4xl w-full mx-auto px-3 sm:px-4 pt-4 flex-1 overflow-x-hidden">
 
         <!-- ========================================== -->
-        <!-- 1. STUDENT ORDERING VIEW                   -->
+        <!-- 1. STUDENT / CUSTOMER ORDERING VIEW        -->
         <!-- ========================================== -->
-        <div id="studentView" class="w-full">
-            <!-- Hero Promo: Min Order ₹100 | ₹100-₹250 = ₹50 Delivery | Above ₹250 = FREE -->
-            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-700 via-brand-600 to-rose-600 p-4 sm:p-5 mb-4 shadow-xl border border-white/10">
-                <div class="relative z-10 max-w-2xl">
-                    <div class="flex flex-wrap items-center gap-1.5 mb-2">
-                        <span class="bg-black/40 backdrop-blur-sm text-amber-300 text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider border border-amber-300/30">
-                            <i class="fa-solid fa-crown mr-1"></i>Shahi Veg & Nonveg (शाही वेज एण्ड नॉनवेज)
-                        </span>
-                        <span class="bg-emerald-500/30 border border-emerald-300/40 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            <i class="fa-solid fa-location-dot mr-1"></i>Nawabganj Delivery Only
-                        </span>
-                    </div>
-                    <h2 class="text-lg sm:text-2xl font-black text-white leading-tight">
-                        Min Order <span class="underline decoration-amber-300">₹100</span> • Get <span class="underline decoration-amber-300">FREE Delivery Above ₹250!</span>
-                    </h2>
-                    <p class="text-xs sm:text-sm text-orange-100 mt-1.5 font-medium leading-relaxed">
-                        Direct from <strong>Bhalla Farm, Kanpur Lucknow Road</strong>. Orders between <strong>₹100 – ₹250</strong> have a <strong>₹50 delivery charge</strong>. Orders <strong>above ₹250 get FREE Delivery!</strong>
-                    </p>
-                </div>
-                <i class="fa-solid fa-drumstick-bite absolute -right-4 -bottom-5 text-7xl sm:text-8xl text-white/10 rotate-12 pointer-events-none"></i>
+        <div id="studentView" class="w-full space-y-4">
+
+            <!-- LIVE ORDER STATUS TRACKER BANNER (Shows automatically when customer places an order) -->
+            <div id="liveOrderTrackerBanner" class="hidden rounded-2xl p-4 border-2 shadow-sm transition-all">
+                <!-- Dynamically populated by renderCustomerLiveTracker() -->
             </div>
 
-            <!-- OWNER (SACHIN SINGH) & SUPPORT (KRISH KUMAR) CONTACT BAR -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                <!-- Restaurant Owner & Delivery Card -->
-                <div class="p-3.5 rounded-2xl bg-gray-900/95 border border-gray-800 flex items-center justify-between gap-2">
-                    <div class="flex items-center space-x-2.5 min-w-0">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center flex-shrink-0">
-                            <i class="fa-solid fa-motorcycle text-sm"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <div class="flex flex-wrap items-center gap-1">
-                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400">Owner & Delivery</span>
-                                <span id="sachinAvailabilityBadge" class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">12 PM–10 PM</span>
-                            </div>
-                            <h3 class="text-sm font-extrabold text-white truncate" id="bannerOwnerName">Sachin Singh</h3>
-                            <p class="text-xs text-gray-300 font-semibold truncate" id="bannerOwnerPhone">
-                                <i class="fa-solid fa-phone text-[10px] mr-1 text-emerald-400"></i>6393734006
-                            </p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-1.5 flex-shrink-0">
-                        <button type="button" onclick="attemptOwnerCall()" class="px-2.5 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold flex items-center space-x-1 transition">
-                            <i class="fa-solid fa-phone text-emerald-400"></i>
-                            <span>Call</span>
-                        </button>
-                        <a id="bannerOwnerWaBtn" href="https://wa.me/916393734006" target="_blank" rel="noopener noreferrer" class="px-2.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold flex items-center space-x-1 transition">
-                            <i class="fa-brands fa-whatsapp"></i>
-                            <span>Chat</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- App Support Card -->
-                <div class="p-3.5 rounded-2xl bg-gray-900/95 border border-gray-800 flex items-center justify-between gap-2">
-                    <div class="flex items-center space-x-2.5 min-w-0">
-                        <div class="w-9 h-9 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center flex-shrink-0">
-                            <i class="fa-solid fa-headset text-sm"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <div class="flex flex-wrap items-center gap-1">
-                                <span class="text-[10px] font-extrabold uppercase tracking-wider text-rose-400">Help & Support</span>
-                                <span id="cardSupportStatusPill" class="text-[9px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">5 PM–3 AM</span>
-                            </div>
-                            <h3 class="text-sm font-extrabold text-white truncate">Krish Kumar</h3>
-                            <p class="text-xs text-gray-300 font-semibold truncate"><i class="fa-solid fa-phone text-[10px] mr-1 text-rose-400"></i>8825293104</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-1.5 flex-shrink-0">
-                        <button type="button" onclick="attemptSupportCall()" id="bannerSupportCallBtn" class="px-2.5 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold flex items-center space-x-1 transition">
-                            <i class="fa-solid fa-phone text-rose-400"></i>
-                        </button>
-                        <button type="button" onclick="openSupportModal('Order Not Delivered')" class="px-2.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-extrabold transition flex items-center space-x-1 shadow-md shadow-rose-600/20">
-                            <i class="fa-solid fa-triangle-exclamation"></i>
-                            <span>Issue?</span>
-                        </button>
-                    </div>
-                </div>
+            <!-- Compact Clean Restaurant Info Header Card (White & Matte Black Mix) -->
+            <div id="activeRestaurantBanner" class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
+                <!-- Injected via JS -->
             </div>
 
-            <!-- Dynamic Min Order ₹100 & Free Delivery (>₹250) Progress Bar -->
-            <div id="freeDeliveryProgressCard" class="mb-4 p-3.5 rounded-2xl bg-gray-900 border border-brand-500/30">
+            <!-- Dynamic Free Delivery Progress Bar (White Card with Matte Black & Emerald Accents) -->
+            <div id="freeDeliveryProgressCard" class="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between text-xs font-bold mb-1.5 gap-2">
-                    <span id="deliveryProgressText" class="text-orange-200 leading-snug">
-                        <i class="fa-solid fa-truck-fast text-brand-400 mr-1"></i>Min Order: <strong>₹100</strong> • ₹100–₹250: <strong>₹50 Delivery</strong> • Above ₹250: <span class="text-emerald-400 underline">FREE Delivery</span>
+                    <span id="deliveryProgressText" class="text-slate-800 leading-snug">
+                        <i class="fa-solid fa-truck-fast text-brand-600 mr-1"></i>Min Order: <strong>₹100</strong> • ₹100–₹250: <strong>₹50 Delivery</strong> • Above ₹250: <span class="text-emerald-600 underline font-black">FREE Delivery</span>
                     </span>
-                    <span id="deliveryProgressBadge" class="text-brand-400 font-extrabold flex-shrink-0">₹0 / ₹250</span>
+                    <span id="deliveryProgressBadge" class="text-matte-900 font-black flex-shrink-0 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">₹0 / ₹250</span>
                 </div>
-                <div class="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
-                    <div id="deliveryProgressBar" class="h-full bg-gradient-to-r from-brand-500 to-emerald-400 transition-all duration-300" style="width: 0%"></div>
+                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                    <div id="deliveryProgressBar" class="h-full bg-gradient-to-r from-matte-900 via-brand-500 to-emerald-500 transition-all duration-300" style="width: 0%"></div>
                 </div>
             </div>
 
-            <!-- Search, Category & Veg Filter Row -->
-            <div class="flex flex-col sm:flex-row gap-2.5 mb-4">
+            <!-- Search Bar (With Secret 827117 Admin & 6393 Kitchen Trigger!) + Veg/Non-Veg Filter -->
+            <div class="flex flex-col sm:flex-row gap-2.5">
                 <div class="relative flex-1">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                    <input type="text" id="searchInput" oninput="renderMenu()" placeholder="Search Tandoori, Chicken, Mutton, Paneer, Naan, Biryani..." class="w-full pl-10 pr-4 py-2.5 bg-gray-900 border border-gray-800 rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="handleSearchAndSecretCodes(this.value)" placeholder="Search Tandoori, Chicken, Mutton, Paneer, Naan, Biryani..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-400 shadow-sm focus:outline-none focus:border-matte-900 transition">
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button onclick="setDietFilter('ALL')" id="filterAll" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 text-white transition">All</button>
-                    <button onclick="setDietFilter('VEG')" id="filterVeg" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-900 text-gray-300 border border-gray-800 flex items-center space-x-1.5 transition">
-                        <span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+                    <button onclick="setDietFilter('ALL')" id="filterAll" class="px-3.5 py-2.5 rounded-xl text-xs font-extrabold bg-matte-900 text-white shadow-sm transition">All</button>
+                    <button onclick="setDietFilter('VEG')" id="filterVeg" class="px-3.5 py-2.5 rounded-xl text-xs font-extrabold bg-white text-slate-700 border border-slate-300 flex items-center space-x-1.5 shadow-sm transition">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
                         <span>Pure Veg (वेज)</span>
                     </button>
-                    <button onclick="setDietFilter('NONVEG')" id="filterNonVeg" class="px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-900 text-gray-300 border border-gray-800 flex items-center space-x-1.5 transition">
-                        <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+                    <button onclick="setDietFilter('NONVEG')" id="filterNonVeg" class="px-3.5 py-2.5 rounded-xl text-xs font-extrabold bg-white text-slate-700 border border-slate-300 flex items-center space-x-1.5 shadow-sm transition">
+                        <span class="w-2.5 h-2.5 rounded-full bg-rose-600 inline-block"></span>
                         <span>Non-Veg (नॉनवेज)</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Partner Kitchen Selector Cards -->
-            <div class="mb-4">
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-xs font-extrabold uppercase tracking-wider text-gray-400">Partner Kitchens (Nawabganj)</h3>
-                    <span class="text-xs text-brand-400 font-semibold" id="restaurantCountBadge">1 Kitchen Live</span>
-                </div>
-                <div id="restaurantTabs" class="flex space-x-3 overflow-x-auto no-scrollbar pb-1">
-                    <!-- Injected via JS -->
-                </div>
-            </div>
-
             <!-- Category Quick Pills -->
-            <div id="categoryPills" class="flex space-x-2 overflow-x-auto no-scrollbar mb-4 pb-1">
-                <!-- Injected via JS -->
-            </div>
-
-            <!-- Active Restaurant Info Header (Wrapping Fixed so Address Never Overflows) -->
-            <div id="activeRestaurantBanner" class="mb-4 p-4 rounded-2xl bg-gradient-to-r from-gray-900 via-gray-900 to-gray-800/90 border border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full overflow-hidden">
+            <div id="categoryPills" class="flex space-x-2 overflow-x-auto no-scrollbar pb-1">
                 <!-- Injected via JS -->
             </div>
 
@@ -325,139 +233,134 @@
                 <!-- Injected via JS -->
             </div>
 
-            <!-- App Footer -->
-            <footer class="mt-10 pt-6 pb-8 border-t border-gray-800/80 text-xs text-gray-400">
+            <!-- Clean Professional Footer -->
+            <footer class="mt-10 pt-6 pb-8 border-t border-slate-200 text-xs text-slate-600">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
                     <div>
-                        <h4 class="font-black text-white text-sm mb-2">Give My <span class="text-brand-500">Food</span></h4>
-                        <p class="text-gray-400 leading-relaxed">Official Nawabganj & campus ordering partner for <strong>Shahi Veg and Nonveg (शाही वेज एण्ड नॉनवेज)</strong> — Bhalla Farm, Kanpur Lucknow Road.</p>
+                        <h4 class="font-black text-slate-900 text-sm mb-1.5">Give My <span class="text-brand-600">Food</span></h4>
+                        <p class="text-slate-500 leading-relaxed">Official Nawabganj ordering platform for <strong>Shahi Veg and Nonveg (Nawabganj)</strong> — Bhalla Farm, Kanpur Lucknow Road.</p>
                     </div>
                     <div>
-                        <h4 class="font-bold text-white uppercase tracking-wider text-[11px] mb-2">Delivery Rules</h4>
-                        <ul class="space-y-1 text-gray-300">
-                            <li><i class="fa-solid fa-bag-shopping text-brand-400 mr-1.5"></i><strong>Minimum Order:</strong> ₹100</li>
-                            <li><i class="fa-solid fa-motorcycle text-amber-400 mr-1.5"></i><strong>₹100 to ₹250 Order:</strong> ₹50 Delivery Charge</li>
-                            <li><i class="fa-solid fa-truck-fast text-emerald-400 mr-1.5"></i><strong>Above ₹250 Order:</strong> FREE Delivery!</li>
-                            <li><i class="fa-solid fa-location-dot text-rose-400 mr-1.5"></i><strong>Area:</strong> Nawabganj Only (Not available outside Nawabganj)</li>
+                        <h4 class="font-extrabold text-slate-900 uppercase tracking-wider text-[11px] mb-1.5">Delivery Rules</h4>
+                        <ul class="space-y-1 text-slate-600">
+                            <li>• <strong>Minimum Order:</strong> ₹100</li>
+                            <li>• <strong>₹100 to ₹250 Order:</strong> ₹50 Delivery Fee</li>
+                            <li>• <strong>Above ₹250 Order:</strong> FREE Delivery!</li>
+                            <li>• <strong>Service Area:</strong> Nawabganj Only</li>
                         </ul>
                     </div>
                     <div>
-                        <h4 class="font-bold text-white uppercase tracking-wider text-[11px] mb-2">Direct Contacts</h4>
-                        <p class="mb-1"><strong class="text-white">Sachin Singh (12 PM–10 PM):</strong> <button onclick="attemptOwnerCall()" class="text-emerald-400 underline font-bold">6393734006</button></p>
-                        <p class="mb-2"><strong class="text-white">Krish Kumar (5 PM–3 AM):</strong> <button onclick="attemptSupportCall()" class="text-rose-400 underline font-bold">8825293104</button></p>
+                        <h4 class="font-extrabold text-slate-900 uppercase tracking-wider text-[11px] mb-1.5">Order & Support Desk</h4>
+                        <p class="mb-1"><strong>Platform & Order Desk:</strong> <button onclick="attemptOwnerCall()" class="text-matte-900 underline font-extrabold">8825293104</button> (12 PM–10 PM)</p>
+                        <p class="mb-2"><strong>Customer Support (Krish):</strong> <button onclick="attemptSupportCall()" class="text-brand-600 underline font-extrabold">8825293104</button> (5 PM–3 AM)</p>
+                        <button onclick="openSupportModal('Order Not Delivered')" class="text-rose-600 hover:underline font-extrabold">Report Order Not Delivered →</button>
                     </div>
                 </div>
-                <div class="text-center text-[11px] text-gray-500 border-t border-gray-800/50 pt-4">
-                    © 2026 Give My Food (Nawabganj Network) • Managed by Krish Kumar (8825293104)
+                <div class="text-center text-[11px] text-slate-400 border-t border-slate-200 pt-4">
+                    © 2026 Give My Food • Managed by Krish Kumar (8825293104)
                 </div>
             </footer>
         </div>
 
-        <!-- ========================================== -->
-        <!-- 2. FOUNDER HUB (ADMIN & COMMISSION LEDGER) -->
-        <!-- ========================================== -->
-        <div id="founderView" class="hidden space-y-6 pb-12">
-            <div class="p-5 rounded-3xl bg-gradient-to-r from-indigo-950 via-gray-900 to-gray-900 border border-indigo-500/30 flex flex-col gap-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <span class="text-[10px] font-extrabold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-full">
-                            <i class="fa-solid fa-user-shield mr-1"></i>Private Founder Hub (PIN: 827117)
-                        </span>
-                        <h2 class="text-xl font-black text-white mt-2">Founder Hub — Krish Kumar's Control Center</h2>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="switchMainView('KITCHEN')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold">
-                            <i class="fa-solid fa-kitchen-set mr-1.5"></i>Kitchen View
-                        </button>
-                        <button onclick="switchMainView('STUDENT')" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-extrabold">
-                            <i class="fa-solid fa-arrow-left mr-1.5"></i>Back to Menu
-                        </button>
-                    </div>
+        <!-- ========================================================= -->
+        <!-- 2. SECRET FOUNDER HUB (OPENED ONLY BY TYPING 827117)      -->
+        <!-- ========================================================= -->
+        <div id="founderView" class="hidden space-y-5 pb-12">
+            <div class="p-5 rounded-3xl bg-matte-900 text-white border border-slate-800 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider bg-brand-500/20 text-brand-400 border border-brand-500/30 px-2.5 py-1 rounded-full">
+                        <i class="fa-solid fa-user-shield mr-1"></i>Secret Founder Hub (Unlocked via Search Bar)
+                    </span>
+                    <h2 class="text-xl font-black text-white mt-2">Krish Kumar — Master Control & Payment Verification</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Verify incoming Paytm UPI payments (`7464074739@ptyes`), reject fake UTRs, and track your 3–5% commission.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="switchMainView('KITCHEN')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold">
+                        <i class="fa-solid fa-kitchen-set mr-1"></i>Kitchen Panel
+                    </button>
+                    <button onclick="switchMainView('STUDENT')" class="px-3.5 py-2 rounded-xl bg-white text-matte-900 hover:bg-slate-100 text-xs font-extrabold">
+                        <i class="fa-solid fa-arrow-left mr-1"></i>Back to Menu
+                    </button>
                 </div>
             </div>
 
-            <!-- UPI Pre-Payment Settings Card -->
-            <div class="p-5 rounded-2xl bg-gray-900 border border-emerald-500/30">
-                <h3 class="text-sm font-extrabold text-white mb-1"><i class="fa-solid fa-qrcode text-emerald-400 mr-1.5"></i>Instant UPI Scanner Config</h3>
-                <p class="text-xs text-gray-400 mb-3">Set the UPI ID for the checkout scanner:</p>
-                <form onsubmit="savePaymentSettings(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label class="text-[11px] font-bold text-gray-300 block mb-1">Receiving UPI ID *</label>
-                        <input type="text" id="adminUpiIdInput" required placeholder="e.g. 8825293104@ybl" class="w-full px-3 py-2 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-                    </div>
-                    <div>
-                        <label class="text-[11px] font-bold text-gray-300 block mb-1">Payee Name *</label>
-                        <input type="text" id="adminUpiNameInput" required placeholder="e.g. Give My Food" class="w-full px-3 py-2 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-                    </div>
-                    <div class="flex items-end">
-                        <button type="submit" class="w-full py-2 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold transition">
-                            Save UPI Settings
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Commission Rate Selector & Metrics -->
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3.5">
-                <div class="p-4 rounded-2xl bg-gray-900 border border-gray-800">
-                    <span class="text-[11px] text-gray-400 font-semibold">Total Orders</span>
-                    <p class="text-2xl font-black text-white mt-1" id="statTotalOrders">0</p>
+            <!-- Commission Metrics -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                    <span class="text-[11px] text-slate-500 font-bold">Total Orders</span>
+                    <p class="text-2xl font-black text-slate-900 mt-1" id="statTotalOrders">0</p>
                 </div>
-                <div class="p-4 rounded-2xl bg-gray-900 border border-gray-800">
-                    <span class="text-[11px] text-gray-400 font-semibold">Food Volume</span>
-                    <p class="text-2xl font-black text-white mt-1" id="statFoodVolume">₹0</p>
+                <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                    <span class="text-[11px] text-slate-500 font-bold">Verified Food Volume</span>
+                    <p class="text-2xl font-black text-slate-900 mt-1" id="statFoodVolume">₹0</p>
                 </div>
-                <div class="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/30">
+                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] text-emerald-300 font-bold">Your Commission</span>
-                        <select id="commissionRateSelect" onchange="updateCommissionRate(this.value)" class="bg-gray-900 text-emerald-400 text-[11px] font-extrabold px-2 py-0.5 rounded border border-emerald-500/40">
+                        <span class="text-[11px] text-emerald-800 font-extrabold">Your Cut</span>
+                        <select id="commissionRateSelect" onchange="updateCommissionRate(this.value)" class="bg-white text-emerald-700 text-[11px] font-black px-2 py-0.5 rounded border border-emerald-300">
                             <option value="3">3%</option>
                             <option value="4">4%</option>
                             <option value="5" selected>5%</option>
                         </select>
                     </div>
-                    <p class="text-2xl font-black text-emerald-400 mt-1" id="statCommissionEarned">₹0</p>
+                    <p class="text-2xl font-black text-emerald-600 mt-1" id="statCommissionEarned">₹0</p>
                 </div>
-                <div class="p-4 rounded-2xl bg-rose-950/30 border border-rose-500/30">
-                    <span class="text-[11px] text-rose-300 font-bold">Support Tickets</span>
-                    <p class="text-2xl font-black text-rose-400 mt-1" id="statOpenTickets">0</p>
+                <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 shadow-sm">
+                    <span class="text-[11px] text-rose-800 font-extrabold">Support Tickets</span>
+                    <p class="text-2xl font-black text-rose-600 mt-1" id="statOpenTickets">0</p>
                 </div>
             </div>
 
-            <!-- Order Ledger Table -->
-            <div class="p-5 rounded-2xl bg-gray-900 border border-gray-800">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-sm font-extrabold text-white"><i class="fa-solid fa-receipt text-brand-400 mr-1.5"></i>Recent Order Ledger</h3>
-                    <button onclick="clearOrderHistory()" class="text-xs text-gray-400 hover:text-rose-400 font-semibold">Reset Ledger</button>
+            <!-- LIVE PAYMENT VERIFICATION & FAKE PAYMENT REJECT QUEUE -->
+            <div class="p-5 rounded-2xl bg-white border-2 border-matte-900 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-200">
+                    <div>
+                        <h3 class="text-sm font-black text-slate-900">
+                            <i class="fa-solid fa-shield-halved text-brand-600 mr-1.5"></i>Live Order & Paytm UPI Verification Queue
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">
+                            Check your Paytm app (`7464074739@ptyes`) for the customer's 12-digit UTR & amount. If money did NOT arrive, click <strong>"Reject (Fake Payment)"</strong>—the customer's screen will immediately show a red Fake Payment warning!
+                        </p>
+                    </div>
+                    <button onclick="clearOrderHistory()" class="text-xs text-slate-400 hover:text-rose-600 font-bold self-start sm:self-center">Clear All</button>
                 </div>
-                <div id="adminOrderLedgerList" class="space-y-2.5"></div>
+                <div id="adminOrderLedgerList" class="space-y-3"></div>
+            </div>
+
+            <!-- Support Callback Queue -->
+            <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-black text-slate-900"><i class="fa-solid fa-phone-volume text-rose-600 mr-1.5"></i>"Order Not Delivered" Callback Requests</h3>
+                    <button onclick="clearSupportTickets()" class="text-xs text-slate-400 hover:text-rose-600 font-bold">Clear</button>
+                </div>
+                <div id="adminSupportTicketList" class="space-y-2.5"></div>
             </div>
         </div>
 
         <!-- ========================================================= -->
-        <!-- 3. RESTAURANT PARTNER PORTAL (MOBILE-FIRST FOR SACHIN)    -->
+        <!-- 3. SECRET KITCHEN PORTAL (OPENED BY TYPING 6393)          -->
         <!-- ========================================================= -->
         <div id="kitchenView" class="hidden space-y-5 pb-16">
-            <div class="p-5 rounded-3xl bg-gradient-to-r from-emerald-950 via-gray-900 to-gray-900 border border-emerald-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="p-5 rounded-3xl bg-matte-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
                 <div>
                     <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase">
                         Kitchen Counter App (दुकान काउंटर ऐप)
                     </span>
-                    <h2 class="text-xl font-black text-white mt-1.5">Shahi Veg & Nonveg — Counter</h2>
-                    <p class="text-xs text-gray-300 mt-0.5">For <strong>Sachin Singh (6393734006)</strong>. Manage orders & turn dishes ON/OFF.</p>
+                    <h2 class="text-xl font-black text-white mt-1.5">Shahi Veg and Nonveg (Nawabganj) — Counter</h2>
+                    <p class="text-xs text-slate-300 mt-0.5">Verify incoming UPI payments, accept/reject orders, or turn dishes Out of Stock.</p>
                 </div>
-                <button onclick="switchMainView('STUDENT')" class="px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-white text-xs font-extrabold self-start sm:self-center">
-                    <i class="fa-solid fa-arrow-left mr-1.5"></i>Exit to Menu
+                <button onclick="switchMainView('STUDENT')" class="px-4 py-2.5 rounded-xl bg-white text-matte-900 text-xs font-extrabold self-start sm:self-center">
+                    <i class="fa-solid fa-arrow-left mr-1.5"></i>Back to Menu
                 </button>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="switchKitchenTab('ORDERS')" id="kitchenTabOrdersBtn" class="py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center space-x-2 border transition bg-emerald-600 text-white border-emerald-400">
-                    <span>1. Live Orders</span>
-                    <span id="kitchenLiveOrderCount" class="ml-1 px-2 py-0.5 rounded-full bg-black/30 text-white text-xs">0</span>
+                <button onclick="switchKitchenTab('ORDERS')" id="kitchenTabOrdersBtn" class="py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center space-x-2 border transition bg-matte-900 text-white border-matte-900 shadow-md">
+                    <span>1. Live Orders (नये ऑर्डर)</span>
+                    <span id="kitchenLiveOrderCount" class="ml-1 px-2 py-0.5 rounded-full bg-brand-500 text-white text-xs">0</span>
                 </button>
-                <button onclick="switchKitchenTab('STOCK')" id="kitchenTabStockBtn" class="py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center space-x-2 border transition bg-gray-900 text-gray-300 border-gray-800">
-                    <span>2. Stock On/Off</span>
+                <button onclick="switchKitchenTab('STOCK')" id="kitchenTabStockBtn" class="py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center space-x-2 border transition bg-white text-slate-700 border-slate-300">
+                    <span>2. Stock On/Off (स्टॉक चालू/बंद)</span>
                 </button>
             </div>
 
@@ -466,12 +369,12 @@
             </div>
 
             <div id="kitchenStockPanel" class="hidden space-y-4">
-                <div class="p-4 rounded-2xl bg-gray-900 border border-gray-800 space-y-3">
+                <div class="p-4 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-sm">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-sm font-black text-white">1-Tap Dish Stock Control</h3>
-                        <button onclick="markAllStock(true)" class="px-3 py-1.5 rounded-xl bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 text-xs font-extrabold">All In Stock</button>
+                        <h3 class="text-sm font-black text-slate-900">1-Tap Dish Stock Control</h3>
+                        <button onclick="markAllStock(true)" class="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-300 text-xs font-extrabold">Mark All Available</button>
                     </div>
-                    <input type="text" id="kitchenStockSearch" oninput="renderKitchenDashboard()" placeholder="Search dish to turn ON/OFF..." class="w-full px-3.5 py-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+                    <input type="text" id="kitchenStockSearch" oninput="renderKitchenDashboard()" placeholder="Search dish to turn ON/OFF..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900">
                 </div>
                 <div id="kitchenStockList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
             </div>
@@ -479,22 +382,22 @@
     </main>
 
     <!-- ========================================== -->
-    <!-- FLOATING BOTTOM CART BAR                   -->
+    <!-- FLOATING MATTE BLACK BOTTOM CART BAR       -->
     <!-- ========================================== -->
     <div id="floatingCartBar" class="fixed bottom-0 left-0 right-0 z-40 p-3 sm:p-4 pointer-events-none hidden">
         <div class="max-w-4xl mx-auto pointer-events-auto">
-            <div class="rounded-2xl bg-gray-900/95 backdrop-blur-xl border border-brand-500/40 shadow-2xl shadow-black p-3.5 sm:px-5 flex items-center justify-between gap-3">
+            <div class="rounded-2xl bg-matte-900 text-white border border-slate-700 shadow-2xl p-3.5 sm:px-5 flex items-center justify-between gap-3">
                 <div class="min-w-0">
                     <div class="flex flex-wrap items-center gap-1.5">
                         <span id="cartBarCount" class="text-xs font-extrabold uppercase tracking-wider text-brand-400">0 Items</span>
-                        <span class="text-gray-600">•</span>
+                        <span class="text-slate-500">•</span>
                         <span id="cartBarTotal" class="text-base sm:text-lg font-black text-white">₹0</span>
                         <span id="cartBarDeliveryTag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">+₹50 Delivery</span>
                     </div>
-                    <p id="cartBarSubtext" class="text-[11px] text-gray-400 mt-0.5 truncate">Min Order ₹100 • Free Delivery &gt; ₹250</p>
+                    <p id="cartBarSubtext" class="text-[11px] text-slate-300 mt-0.5 truncate">Min Order ₹100 • Free Delivery &gt; ₹250</p>
                 </div>
-                <button id="floatingCheckoutBtn" onclick="openCheckoutModal()" class="px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-rose-600 hover:from-brand-600 hover:to-rose-700 text-white font-extrabold text-xs sm:text-sm flex items-center space-x-2 shadow-lg shadow-brand-500/25 transition flex-shrink-0">
-                    <span id="floatingCheckoutBtnText">Checkout</span>
+                <button id="floatingCheckoutBtn" onclick="openCheckoutModal()" class="px-4 sm:px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-black text-xs sm:text-sm flex items-center space-x-2 shadow-lg transition flex-shrink-0">
+                    <span id="floatingCheckoutBtnText">Checkout & Pay</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </div>
@@ -502,148 +405,155 @@
     </div>
 
     <!-- ========================================================== -->
-    <!-- ZOMATO-STYLE CHECKOUT & AUTO-RETURN UPI SCANNER MODAL      -->
+    <!-- CHECKOUT, PAYTM QR SCANNER & LIVE ORDER TRACKER MODAL      -->
     <!-- ========================================================== -->
-    <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-gray-900 border border-gray-800 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto p-5 animate-slide-up">
-            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+    <div id="checkoutModal" class="fixed inset-0 z-50 bg-matte-900/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto p-5 shadow-2xl animate-slide-up text-slate-900">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
                 <div>
-                    <h3 class="text-base font-black text-white">Checkout & Instant UPI Pay</h3>
-                    <p class="text-xs text-gray-400" id="checkoutRestTitle">Kitchen: Shahi Veg and Nonveg</p>
+                    <h3 class="text-base font-black text-slate-900" id="checkoutModalHeaderTitle">Checkout & Delivery Address</h3>
+                    <p class="text-xs text-slate-500 font-semibold" id="checkoutRestTitle">Shahi Veg and Nonveg (Nawabganj)</p>
                 </div>
-                <button onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center">
+                <button onclick="closeCheckoutModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- STEP 1: ADDRESS & CART SUMMARY -->
+            <!-- PROMINENT NAWABGANJ-ONLY HIGHLIGHT BANNER INSIDE PAYMENT/CHECKOUT -->
+            <div class="mt-3 p-3 rounded-2xl bg-matte-900 text-white flex items-center justify-between gap-2 shadow-sm">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-brand-500 text-white flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-location-dot text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black uppercase tracking-wide text-amber-400">Orders Strictly Available in Nawabganj Only</p>
+                        <p class="text-[11px] text-slate-300">Outside Nawabganj area, food delivery is not available.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 1: ADDRESS & BILL SUMMARY -->
             <div id="checkoutStep1">
-                <!-- Dynamic Free Delivery Upsell inside Checkout -->
-                <div id="checkoutDeliveryNotice" class="my-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200"></div>
+                <div id="checkoutDeliveryNotice" class="my-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-semibold"></div>
 
                 <!-- Cart Items List -->
                 <div id="checkoutItemsList" class="space-y-2 my-3 max-h-40 overflow-y-auto pr-1"></div>
 
                 <!-- Bill Summary Card -->
-                <div class="p-3.5 rounded-2xl bg-gray-950 border border-gray-800 space-y-1.5 text-xs mb-4">
-                    <div class="flex justify-between text-gray-300">
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5 text-xs mb-4">
+                    <div class="flex justify-between text-slate-600 font-semibold">
                         <span>Food Subtotal (Min ₹100)</span>
-                        <span id="billSubtotal" class="font-bold">₹0</span>
+                        <span id="billSubtotal" class="font-bold text-slate-900">₹0</span>
                     </div>
-                    <div class="flex justify-between text-gray-300">
+                    <div class="flex justify-between text-slate-600 font-semibold">
                         <span>Delivery Charge (₹100–₹250: ₹50 | &gt;₹250: FREE)</span>
                         <span id="billDelivery" class="font-bold">₹50</span>
                     </div>
-                    <div class="border-t border-gray-800 pt-2 flex justify-between text-sm font-black text-white">
-                        <span>Total Payable</span>
-                        <span id="billGrandTotal" class="text-brand-400">₹0</span>
+                    <div class="border-t border-slate-200 pt-2 flex justify-between text-sm font-black text-slate-900">
+                        <span>Total Online Payable</span>
+                        <span id="billGrandTotal" class="text-brand-600 text-base">₹0</span>
                     </div>
                 </div>
 
-                <!-- Custom Address Form (No Dropdown, No Room No, Nawabganj Warning) -->
-                <form onsubmit="startZomatoStylePayment(event)" class="space-y-3">
+                <!-- Address Form -->
+                <form onsubmit="goToPaytmScannerStep(event)" class="space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         <div>
-                            <label class="text-[11px] font-bold text-gray-300 block mb-1">Your Name *</label>
-                            <input type="text" id="custName" required placeholder="Your Name" class="w-full px-3 py-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:border-brand-500 focus:outline-none">
+                            <label class="text-[11px] font-extrabold text-slate-700 block mb-1">Your Name *</label>
+                            <input type="text" id="custName" required placeholder="Your Name" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
                         </div>
                         <div>
-                            <label class="text-[11px] font-bold text-gray-300 block mb-1">Mobile Number *</label>
-                            <input type="tel" id="custPhone" required pattern="[0-9]{10}" placeholder="10-Digit Mobile No." class="w-full px-3 py-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:border-brand-500 focus:outline-none">
+                            <label class="text-[11px] font-extrabold text-slate-700 block mb-1">10-Digit Mobile No. *</label>
+                            <input type="tel" id="custPhone" required pattern="[0-9]{10}" placeholder="10-Digit Mobile No." class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
                         </div>
-                    </div>
-
-                    <!-- Manual Address Textarea + Nawabganj Restriction Banner -->
-                    <div>
-                        <div class="flex items-center justify-between mb-1">
-                            <label class="text-[11px] font-bold text-gray-300">Complete Delivery Address (Within Nawabganj Only) *</label>
-                            <span class="text-[10px] font-extrabold text-rose-400">Outside Nawabganj Not Available</span>
-                        </div>
-                        <textarea id="custAddress" rows="2" required placeholder="Type your full delivery address, landmark, college/building name in Nawabganj..." class="w-full px-3 py-2.5 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:border-brand-500 focus:outline-none"></textarea>
-                        <p class="text-[11px] text-amber-300 mt-1 font-semibold">
-                            <i class="fa-solid fa-circle-exclamation mr-1"></i>Note: Delivery is strictly available inside <strong>Nawabganj</strong>. Orders outside Nawabganj are not available.
-                        </p>
                     </div>
 
                     <div>
-                        <label class="text-[11px] font-bold text-gray-300 block mb-1">Cooking Instructions (Optional)</label>
-                        <input type="text" id="custNotes" placeholder="Optional: Less spicy, extra onions..." class="w-full px-3 py-2 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white focus:border-brand-500 focus:outline-none">
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="text-[11px] font-extrabold text-slate-700">Complete Delivery Address in Nawabganj *</label>
+                            <span class="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">Nawabganj Only</span>
+                        </div>
+                        <textarea id="custAddress" rows="2" required placeholder="Enter full address, hostel/building name, room or landmark inside Nawabganj..." class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none"></textarea>
                     </div>
 
-                    <button type="submit" id="proceedToPayBtn" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm flex items-center justify-center space-x-2 shadow-lg shadow-emerald-600/30 transition">
-                        <i class="fa-solid fa-qrcode text-base"></i>
-                        <span>Proceed to Instant UPI Scanner</span>
+                    <div>
+                        <label class="text-[11px] font-extrabold text-slate-700 block mb-1">Cooking Instructions (Optional)</label>
+                        <input type="text" id="custNotes" placeholder="Optional: Less spicy, extra onions..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-2xl bg-matte-900 hover:bg-slate-800 text-white font-black text-sm flex items-center justify-center space-x-2 shadow-lg transition">
+                        <i class="fa-solid fa-qrcode text-brand-400 text-base"></i>
+                        <span>Proceed to Paytm UPI Scanner</span>
                     </button>
                 </form>
             </div>
 
-            <!-- STEP 2: ZOMATO-STYLE INSTANT UPI SCANNER & AUTO-RETURN INTERFACE -->
-            <div id="checkoutStep2" class="hidden py-3 text-center space-y-4">
-                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-extrabold">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span id="paymentLiveStatusText">Waiting for UPI Payment...</span>
-                </div>
+            <!-- STEP 2: MR KRISH KUMAR PAYTM UPI SCANNER + 12-DIGIT UTR INPUT -->
+            <div id="checkoutStep2" class="hidden py-3 text-center space-y-3.5">
+                <!-- Authentic Paytm Style Card -->
+                <div class="p-4 rounded-3xl bg-gradient-to-b from-sky-500 to-blue-900 text-white shadow-xl max-w-xs mx-auto border-2 border-sky-400">
+                    <div class="bg-white text-slate-900 rounded-2xl p-4 shadow-md">
+                        <!-- Profile Badge -->
+                        <div class="flex items-center justify-center space-x-2 mb-2">
+                            <div class="w-8 h-8 rounded-full bg-pink-100 text-pink-700 font-black text-xs flex items-center justify-center border border-pink-300">MK</div>
+                            <div class="text-left">
+                                <p class="text-xs font-black text-slate-900 flex items-center">
+                                    Mr Krish Kumar <i class="fa-solid fa-circle-check text-blue-600 ml-1 text-[11px]"></i>
+                                </p>
+                                <p class="text-[10px] font-bold text-slate-500">Paytm Verified Merchant QR</p>
+                            </div>
+                        </div>
 
-                <h4 class="text-lg font-black text-white">Scan QR or Tap UPI App to Pay <span id="upiPayAmountText" class="text-emerald-400">₹0</span></h4>
-                <p class="text-xs text-gray-400 max-w-sm mx-auto">Scan with any UPI App (GPay, PhonePe, Paytm). After paying in your UPI app, this screen will automatically confirm your order!</p>
+                        <div class="text-xs font-black tracking-wide text-sky-600 mb-2">
+                            paytm <span class="text-rose-500">❤</span> <span class="text-slate-800">UPI</span> • Pay <span id="upiPayAmountText" class="text-emerald-600 text-sm underline">₹0</span>
+                        </div>
 
-                <!-- Dynamic Scanner Box -->
-                <div class="relative inline-block p-4 rounded-3xl bg-white shadow-2xl border-4 border-emerald-500">
-                    <img id="upiQrImage" src="https://placehold.co/180x180/ffffff/10b981?text=UPI+QR" alt="Scan UPI QR" class="w-44 h-44 mx-auto">
-                    <div id="qrVerifiedOverlay" class="hidden absolute inset-0 rounded-2xl bg-emerald-600/95 flex flex-col items-center justify-center text-white p-3">
-                        <i class="fa-solid fa-circle-check text-5xl mb-2 animate-bounce"></i>
-                        <p class="font-black text-sm">Payment Confirmed!</p>
-                        <p class="text-[11px] text-emerald-100">Redirecting to Order Screen...</p>
+                        <!-- Instant Scannable QR Container (Rendered via QRCode.js + Fallback Image) -->
+                        <div class="flex flex-col items-center justify-center my-2">
+                            <div id="qrcodeCanvasContainer" class="p-2 bg-white rounded-xl border-2 border-slate-200 inline-block"></div>
+                        </div>
+
+                        <p class="text-[11px] font-mono font-extrabold text-slate-800 mt-2 select-all bg-slate-100 py-1 px-2 rounded-lg border border-slate-200">
+                            <i class="fa-solid fa-bolt text-amber-500 mr-1"></i><span id="checkoutUpiIdDisplay">7464074739@ptyes</span>
+                        </p>
                     </div>
+                    <p class="text-[11px] font-bold text-sky-100 mt-2.5">Scan with Paytm, PhonePe, Google Pay or BHIM</p>
                 </div>
 
-                <div class="text-xs text-gray-400">
-                    Paying to UPI ID: <strong id="checkoutUpiIdDisplay" class="text-white select-all">8825293104@ybl</strong>
-                    <span class="block text-[11px] text-amber-300 mt-0.5">Session Timer: <strong id="upiCountdownTimer">04:59</strong></span>
-                </div>
-
-                <!-- 1-Tap Open UPI App Button (Triggers auto-return listener when user switches back from GPay/PhonePe) -->
-                <div class="space-y-2 pt-1">
-                    <a id="upiDeepLinkBtn" onclick="notifyUpiAppOpened()" href="#" class="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm flex items-center justify-center space-x-2 shadow-lg shadow-emerald-600/30 transition">
-                        <i class="fa-solid fa-mobile-screen-button text-base"></i>
-                        <span>Pay Instantly via GPay / PhonePe / Paytm</span>
+                <!-- 1-Tap Pay via UPI App Button -->
+                <div class="max-w-xs mx-auto">
+                    <a id="upiDeepLinkBtn" href="#" class="w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center justify-center space-x-2 shadow-md transition">
+                        <i class="fa-solid fa-mobile-screen-button text-sm"></i>
+                        <span>Open Paytm / GPay / PhonePe App</span>
                     </a>
+                </div>
 
-                    <button type="button" onclick="completeAutoVerifiedOrder('QR_SCAN')" class="w-full py-3 px-4 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-extrabold text-xs flex items-center justify-center space-x-2 transition">
-                        <i class="fa-solid fa-bolt"></i>
-                        <span>I Have Scanned & Paid — Confirm Order Now</span>
+                <!-- Mandatory 12-Digit UTR Verification Form -->
+                <form onsubmit="submitUtrAndStartPreparing(event)" class="text-left bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                    <div>
+                        <label class="text-[11px] font-black text-slate-800 block mb-1">
+                            Enter 12-Digit UPI UTR / Reference No. After Payment *
+                        </label>
+                        <input type="text" id="custUpiUtr" required pattern="[0-9]{12}" maxlength="12" inputmode="numeric" placeholder="Enter exact 12-digit UTR number (e.g. 431289017423)" class="w-full px-3.5 py-2.5 bg-white border-2 border-slate-300 rounded-xl text-xs font-mono font-black text-slate-900 tracking-wider focus:border-matte-900 focus:outline-none">
+                        <p class="text-[10px] text-slate-500 mt-1 font-medium">
+                            <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i>Your 12-digit UTR is verified against Mr Krish Kumar's bank statement (`7464074739@ptyes`). Fake UTRs are automatically rejected.
+                        </p>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 rounded-2xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm flex items-center justify-center space-x-2 shadow-lg transition">
+                        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                        <span>Submit Payment & Start Preparing Order</span>
                     </button>
 
-                    <button type="button" onclick="backToCheckoutStep1()" class="text-xs text-gray-400 hover:text-white underline pt-1">
+                    <button type="button" onclick="backToCheckoutStep1()" class="w-full text-center text-xs text-slate-500 hover:text-slate-900 font-bold underline pt-1">
                         ← Edit Delivery Address
                     </button>
-                </div>
+                </form>
             </div>
 
-            <!-- STEP 3: ZOMATO-STYLE LIVE ORDER CONFIRMED INTERFACE -->
-            <div id="checkoutStep3" class="hidden py-6 text-center space-y-4">
-                <div class="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-400 text-emerald-400 flex items-center justify-center mx-auto">
-                    <i class="fa-solid fa-check text-3xl"></i>
-                </div>
-                <div>
-                    <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-black uppercase">Payment Verified • Order Placed</span>
-                    <h4 class="text-xl font-black text-white mt-2" id="confirmedOrderIdTitle">Order #GMF-1001 Confirmed!</h4>
-                    <p class="text-xs text-gray-300 mt-1" id="confirmedOrderSubtext">Your order has been sent to Shahi Veg & Nonveg kitchen counter.</p>
-                </div>
-                <div class="p-3.5 rounded-2xl bg-gray-950 border border-gray-800 text-left text-xs space-y-1">
-                    <p class="text-gray-400">Delivering To (Nawabganj):</p>
-                    <p class="font-bold text-white" id="confirmedAddressText"></p>
-                    <p class="text-emerald-400 font-extrabold pt-1" id="confirmedAmountText"></p>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <a id="confirmedWaBtn" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center justify-center space-x-1.5">
-                        <i class="fa-brands fa-whatsapp text-sm"></i>
-                        <span>Send Receipt on Kitchen WhatsApp</span>
-                    </a>
-                    <button type="button" onclick="closeCheckoutModal()" class="py-3 px-4 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-bold text-xs">
-                        Done
-                    </button>
-                </div>
+            <!-- STEP 3: REASSURING "PAYMENT DONE • PREPARING ORDER" OR RED "FAKE PAYMENT DETECTED" SCREEN -->
+            <div id="checkoutStep3" class="hidden py-4 text-center space-y-4">
+                <!-- Dynamically filled by renderStep3LiveOrderState() so it updates in real time! -->
             </div>
         </div>
     </div>
@@ -651,51 +561,51 @@
     <!-- ========================================== -->
     <!-- USER PROFILE / LOGOUT MODAL                -->
     <!-- ========================================== -->
-    <div id="userProfileModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-gray-900 border border-gray-800 w-full max-w-xs rounded-3xl p-5 text-center animate-slide-up">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto mb-3">
-                <i class="fa-solid fa-user-check text-xl"></i>
+    <div id="userProfileModal" class="fixed inset-0 z-50 bg-matte-900/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-xs rounded-3xl p-5 text-center animate-slide-up shadow-2xl">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-300 text-matte-900 flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-user-check text-xl text-emerald-600"></i>
             </div>
-            <h3 class="text-base font-black text-white" id="profileModalName">User Name</h3>
-            <p class="text-xs text-emerald-400 font-bold mt-0.5" id="profileModalPhone">+91 0000000000</p>
-            <p class="text-[11px] text-gray-400 mt-2 mb-4">Logged in on Give My Food (Nawabganj Delivery)</p>
+            <h3 class="text-base font-black text-slate-900" id="profileModalName">User Name</h3>
+            <p class="text-xs text-emerald-600 font-extrabold mt-0.5" id="profileModalPhone">+91 0000000000</p>
+            <p class="text-[11px] text-slate-500 mt-2 mb-4">Logged in for Nawabganj Delivery</p>
             <div class="flex space-x-2">
-                <button onclick="closeUserProfileModal()" class="flex-1 py-2.5 rounded-xl bg-gray-800 text-gray-300 text-xs font-bold">Close</button>
+                <button onclick="closeUserProfileModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Close</button>
                 <button onclick="handleUserLogout()" class="flex-1 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-extrabold">Logout</button>
             </div>
         </div>
     </div>
 
     <!-- ========================================== -->
-    <!-- HELP & SUPPORT MODAL (KRISH KUMAR)         -->
+    <!-- HELP & SUPPORT MODAL (KRISH: 8825293104)   -->
     <!-- ========================================== -->
-    <div id="supportModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-gray-900 border border-gray-800 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto p-5 animate-slide-up">
-            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+    <div id="supportModal" class="fixed inset-0 z-50 bg-matte-900/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto p-5 animate-slide-up shadow-2xl text-slate-900">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
                 <div class="flex items-center space-x-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center">
-                        <i class="fa-solid fa-headset"></i>
+                    <div class="w-9 h-9 rounded-xl bg-matte-900 text-white flex items-center justify-center">
+                        <i class="fa-solid fa-headset text-brand-400"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-black text-white">Help & Support Center</h3>
-                        <p class="text-[11px] text-gray-400">Managed by <strong class="text-white">Krish Kumar (8825293104)</strong></p>
+                        <h3 class="text-base font-black text-slate-900">Help & Support Center</h3>
+                        <p class="text-[11px] text-slate-500">Managed by <strong class="text-slate-900">Krish Kumar (8825293104)</strong></p>
                     </div>
                 </div>
-                <button onclick="closeSupportModal()" class="w-8 h-8 rounded-full bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center">
+                <button onclick="closeSupportModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div class="my-3.5 p-4 rounded-2xl bg-gray-950 border border-gray-800">
+            <div class="my-3.5 p-4 rounded-2xl bg-slate-50 border border-slate-200">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-rose-400">
-                        <i class="fa-regular fa-clock mr-1"></i>Support Call Hours: 5:00 PM – 3:00 AM
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
+                        <i class="fa-regular fa-clock mr-1 text-brand-600"></i>Support Call Hours: 5:00 PM – 3:00 AM
                     </span>
-                    <span id="supportModalLiveBadge" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    <span id="supportModalLiveBadge" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300">
                         CALLS ACTIVE
                     </span>
                 </div>
-                <p id="supportModalHoursExplanation" class="text-xs text-gray-300 leading-relaxed mb-3">
+                <p id="supportModalHoursExplanation" class="text-xs text-slate-600 leading-relaxed mb-3">
                     Direct phone support with Krish Kumar (8825293104) is open daily from <strong>5:00 PM evening until 3:00 AM midnight</strong>.
                 </p>
 
@@ -705,32 +615,33 @@
                         <span id="supportModalCallBtnText">Call Krish (8825293104)</span>
                     </button>
 
-                    <button type="button" onclick="attemptOwnerCall()" class="w-full py-2.5 px-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-emerald-400 border border-gray-700 font-extrabold text-xs flex items-center justify-center space-x-2 transition">
-                        <i class="fa-solid fa-motorcycle"></i>
-                        <span id="supportModalSachinBtnText">Sachin (6393734006)</span>
+                    <button type="button" onclick="attemptOwnerCall()" class="w-full py-2.5 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-extrabold text-xs flex items-center justify-center space-x-2 transition">
+                        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                        <span>Order Desk (8825293104)</span>
                     </button>
                 </div>
             </div>
 
-            <div class="p-4 rounded-2xl bg-rose-950/20 border border-rose-500/30">
-                <h4 class="text-xs font-extrabold uppercase tracking-wider text-rose-300 mb-1">
-                    Order Issue / Request Callback
+            <div class="p-4 rounded-2xl bg-rose-50/70 border border-rose-200">
+                <h4 class="text-xs font-extrabold uppercase tracking-wider text-rose-700 mb-1">
+                    Order Not Delivered / Request Callback
                 </h4>
-                <form onsubmit="submitSupportTicket(event)" class="space-y-2.5 mt-2">
-                    <select id="ticketIssueType" required class="w-full px-3 py-2 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+                <p class="text-[11px] text-slate-600 mb-2.5">Submit your number below and Krish Kumar (8825293104) will call you right back.</p>
+                <form onsubmit="submitSupportTicket(event)" class="space-y-2.5">
+                    <select id="ticketIssueType" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900">
                         <option value="Order Not Delivered">🚨 Order Not Delivered</option>
                         <option value="Delayed Beyond 45 Minutes">⏳ Order Delayed Beyond 45 Minutes</option>
                         <option value="Missing or Wrong Item">📦 Missing or Wrong Item Received</option>
-                        <option value="Payment / Delivery Fee Issue">💳 Payment or Billing Concern</option>
+                        <option value="Payment / Verification Issue">💳 Payment / UTR Verification Concern</option>
                     </select>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <input type="tel" id="ticketCustomerPhone" required pattern="[0-9]{10}" placeholder="Your 10-digit mobile number" class="w-full px-3 py-2 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-                        <input type="text" id="ticketCustomerName" required placeholder="Your Name" class="w-full px-3 py-2 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
+                        <input type="tel" id="ticketCustomerPhone" required pattern="[0-9]{10}" placeholder="Your 10-digit mobile number" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900">
+                        <input type="text" id="ticketCustomerName" required placeholder="Your Name" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900">
                     </div>
-                    <input type="text" id="ticketOrderDetails" required placeholder="Your Address in Nawabganj & Dish Ordered" class="w-full px-3 py-2 bg-gray-950 border border-gray-800 rounded-xl text-xs text-white">
-                    <button type="submit" class="w-full py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs flex items-center justify-center space-x-2 transition">
-                        <i class="fa-brands fa-whatsapp text-base"></i>
-                        <span>Submit & Request Callback from Krish</span>
+                    <input type="text" id="ticketOrderDetails" required placeholder="Your Address in Nawabganj & Dish Ordered" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900">
+                    <button type="submit" class="w-full py-3 rounded-xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs flex items-center justify-center space-x-2 transition">
+                        <i class="fa-brands fa-whatsapp text-emerald-400 text-base"></i>
+                        <span>Submit & Request Callback (8825293104)</span>
                     </button>
                 </form>
             </div>
@@ -740,71 +651,47 @@
     <!-- ========================================== -->
     <!-- TERMS & CONDITIONS MODAL                   -->
     <!-- ========================================== -->
-    <div id="termsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-gray-900 border border-gray-800 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 animate-slide-up">
-            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
-                <h3 class="text-base font-black text-white">Terms & Conditions</h3>
-                <button onclick="closeTermsModal()" class="w-8 h-8 rounded-full bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center">
+    <div id="termsModal" class="fixed inset-0 z-50 bg-matte-900/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto p-5 animate-slide-up shadow-2xl text-slate-900">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <h3 class="text-base font-black text-slate-900">Terms & Conditions</h3>
+                <button onclick="closeTermsModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="py-4 space-y-3 text-xs text-gray-300 leading-relaxed">
-                <div class="p-3 rounded-xl bg-gray-950 border border-gray-800">
-                    <h4 class="font-extrabold text-white mb-1">1. Minimum Order Value & Delivery Charges</h4>
+            <div class="py-4 space-y-3 text-xs text-slate-600 leading-relaxed">
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <h4 class="font-extrabold text-slate-900 mb-1">1. Minimum Order Value & Delivery Charges</h4>
                     <p>• <strong>Minimum Order Value:</strong> ₹100.<br>
                     • <strong>Orders from ₹100 to ₹250:</strong> Flat ₹50 delivery charge applies.<br>
                     • <strong>Orders Above ₹250:</strong> 100% FREE Delivery!</p>
                 </div>
-                <div class="p-3 rounded-xl bg-gray-950 border border-gray-800">
-                    <h4 class="font-extrabold text-white mb-1">2. Delivery Area: Nawabganj Only</h4>
-                    <p>Delivery is strictly available within <strong>Nawabganj</strong> area only. Outside Nawabganj, delivery service is not available.</p>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <h4 class="font-extrabold text-slate-900 mb-1">2. Service Area: Nawabganj Only</h4>
+                    <p>Orders are strictly delivered inside <strong>Nawabganj</strong> area only. Outside Nawabganj, delivery is not available.</p>
                 </div>
-                <div class="p-3 rounded-xl bg-gray-950 border border-gray-800">
-                    <h4 class="font-extrabold text-white mb-1">3. Timings (12:00 PM – 10:00 PM)</h4>
-                    <p>Food delivery & Sachin Singh counter hours are 12:00 PM to 10:00 PM daily. Support calls to Krish Kumar (8825293104) are active from 5:00 PM to 3:00 AM.</p>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <h4 class="font-extrabold text-slate-900 mb-1">3. 100% Online Pre-Payment & Fake Payment Protection</h4>
+                    <p>All orders require online UPI payment to <strong>7464074739@ptyes (Mr Krish Kumar)</strong>. Orders with unverified or fake UTR numbers are automatically rejected and flagged.</p>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                    <h4 class="font-extrabold text-slate-900 mb-1">4. Operating & Support Timings</h4>
+                    <p>Food delivery operates from 12:00 PM to 10:00 PM daily. Customer support calls to Krish Kumar (8825293104) are active from 5:00 PM to 3:00 AM midnight.</p>
                 </div>
             </div>
-            <button onclick="closeTermsModal()" class="w-full py-2.5 rounded-xl bg-brand-600 text-white font-bold text-xs">I Understand</button>
-        </div>
-    </div>
-
-    <!-- PIN MODALS FOR FOUNDER HUB (827117) & KITCHEN (6393) -->
-    <div id="pinModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-gray-900 border border-gray-800 w-full max-w-xs rounded-3xl p-5 text-center animate-slide-up">
-            <h3 class="text-base font-black text-white mb-2">Founder Hub (PIN: 827117)</h3>
-            <form onsubmit="verifyAdminPin(event)" class="space-y-3">
-                <input type="password" id="adminPinInput" maxlength="6" placeholder="••••••" class="w-full text-center tracking-widest text-lg font-black px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-xl text-white">
-                <div class="flex space-x-2">
-                    <button type="button" onclick="closePinModal()" class="flex-1 py-2.5 rounded-xl bg-gray-800 text-gray-300 text-xs font-bold">Cancel</button>
-                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-brand-600 text-white text-xs font-extrabold">Unlock</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="kitchenPinModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-gray-900 border border-emerald-500/40 w-full max-w-xs rounded-3xl p-5 text-center animate-slide-up">
-            <h3 class="text-base font-black text-white mb-1">Kitchen Login</h3>
-            <p class="text-xs text-emerald-400 font-bold mb-3">Counter PIN: 6393</p>
-            <form onsubmit="verifyKitchenPin(event)" class="space-y-3">
-                <input type="password" id="kitchenPinInput" maxlength="6" placeholder="••••" class="w-full text-center tracking-widest text-lg font-black px-4 py-2.5 bg-gray-950 border border-gray-800 rounded-xl text-white">
-                <div class="flex space-x-2">
-                    <button type="button" onclick="closeKitchenPinModal()" class="flex-1 py-2.5 rounded-xl bg-gray-800 text-gray-300 text-xs font-bold">Cancel</button>
-                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold">Open</button>
-                </div>
-            </form>
+            <button onclick="closeTermsModal()" class="w-full py-2.5 rounded-xl bg-matte-900 text-white font-bold text-xs">I Understand</button>
         </div>
     </div>
 
     <!-- CUSTOM TOAST -->
     <div id="toastBox" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden max-w-md w-[92%]">
-        <div class="p-3.5 rounded-2xl bg-gray-900 border border-gray-700 shadow-2xl flex items-start space-x-3 text-xs">
+        <div class="p-3.5 rounded-2xl bg-matte-900 text-white border border-slate-700 shadow-2xl flex items-start space-x-3 text-xs">
             <i id="toastIcon" class="fa-solid fa-circle-info text-brand-400 text-base mt-0.5"></i>
             <div class="flex-1">
                 <p id="toastTitle" class="font-extrabold text-white">Notice</p>
-                <p id="toastMessage" class="text-gray-300 mt-0.5 leading-relaxed"></p>
+                <p id="toastMessage" class="text-slate-300 mt-0.5 leading-relaxed"></p>
             </div>
-            <button onclick="hideToast()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="hideToast()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
         </div>
     </div>
 
@@ -812,25 +699,27 @@
     <!-- APPLICATION JAVASCRIPT                     -->
     <!-- ========================================== -->
     <script>
-        // --- CORE CONSTANTS ---
+        // --- CORE CONSTANTS (ALL CONTACTS SET TO KRISH: 8825293104 FOR TRIAL) ---
         const MIN_ORDER_VALUE = 100;             // Minimum order ₹100
         const FREE_DELIVERY_THRESHOLD = 250;     // ₹100 to ₹250 = ₹50 Delivery | Above ₹250 (>250) = FREE Delivery
         const DELIVERY_CHARGE_BELOW_THRESHOLD = 50;
-        const SUPPORT_OWNER_NAME = "Krish Kumar";
-        const SUPPORT_OWNER_PHONE = "8825293104";
-        const ADMIN_PIN = "827117";
-        const KITCHEN_PIN = "6393";
-        const DATA_VERSION = "shahi_v5_nawabganj"; // Bumped version to clear old cached ₹300 rules
+        const MASTER_CONTACT_NAME = "Krish Kumar";
+        const MASTER_CONTACT_PHONE = "8825293104"; // Used everywhere for trial (no Sachin number anywhere)
+        const PAYTM_UPI_ID = "7464074739@ptyes";   // Exact Paytm UPI ID from Krish's scanner
+        const PAYTM_PAYEE_NAME = "Mr Krish Kumar";
+        const SECRET_ADMIN_CODE = "827117";        // Secret Search Bar trigger for Founder Hub
+        const SECRET_KITCHEN_CODE = "6393";        // Secret Search Bar trigger for Kitchen App
+        const DATA_VERSION = "shahi_v6_krish_trial";
 
         const DEFAULT_RESTAURANTS = [
             {
                 id: 'rest_shahi',
-                name: "Shahi Veg and Nonveg (शाही वेज एण्ड नॉनवेज)",
-                shortDropdownName: "Shahi Veg & Nonveg (Bhalla Farm)",
-                ownerName: "Sachin Singh",
-                phone: "6393734006",
+                name: "Shahi Veg and Nonveg (Nawabganj)",
+                hindiSubName: "शाही वेज एण्ड नॉनवेज • Bhalla Farm, Kanpur Lucknow Road",
+                ownerName: "Krish Kumar",
+                phone: "8825293104",
                 location: "Bhalla Farm, Kanpur Lucknow Road, Nawabganj",
-                tagline: "Tandoori, Chicken, Mutton, Paneer, Naan & Biryani",
+                tagline: "Authentic Tandoori, Chicken, Mutton, Paneer, Naan & Biryani",
                 rating: "4.8",
                 prepTime: "25–35 mins",
                 isPrimary: true
@@ -838,12 +727,12 @@
         ];
 
         const DEFAULT_MENU = [
-            { id: 'sh_1', restId: 'rest_shahi', name: 'Tandoori Chicken (तन्दूरी चिकन)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: true, desc: 'Smoky clay-oven roasted spiced chicken with mint chutney.', variants: [{ label: 'Half (हॉफ)', price: 180 }, { label: 'Full (फुल)', price: 350 }] },
+            { id: 'sh_1', restId: 'rest_shahi', name: 'Tandoori Chicken (तन्दूरी चिकन)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: true, desc: 'Smoky clay-oven roasted spiced chicken served with mint chutney & onion rings.', variants: [{ label: 'Half (हॉफ)', price: 180 }, { label: 'Full (फुल)', price: 350 }] },
             { id: 'sh_2', restId: 'rest_shahi', name: 'Chicken Barra (चिकन बर्रा)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: true, desc: 'Char-grilled Mughlai chicken barra pieces (8 Pcs).', variants: [{ label: '8 Pcs (8 पीस)', price: 180 }] },
-            { id: 'sh_3', restId: 'rest_shahi', name: 'Chicken Roll (चिकन रोल)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: true, desc: 'Hot spiced chicken tikka wrapped in a paratha roll.', variants: [{ label: '1 Roll', price: 60 }] },
+            { id: 'sh_3', restId: 'rest_shahi', name: 'Chicken Roll (चिकन रोल)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: true, desc: 'Hot spiced chicken tikka wrapped in a flaky paratha roll.', variants: [{ label: '1 Roll', price: 60 }] },
             { id: 'sh_4', restId: 'rest_shahi', name: 'Chicken Lollipop (चिकन लालीपॉप)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: false, desc: 'Crispy fried spiced chicken wings lollipop (6 Pcs).', variants: [{ label: '6 Pcs (6 पीस)', price: 160 }] },
-            { id: 'sh_5', restId: 'rest_shahi', name: 'Chicken Chilli (चिकन चिली)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: false, desc: 'Indo-Chinese chilli chicken with capsicum & onion.', variants: [{ label: '1 Plate (प्लेट)', price: 180 }] },
-            { id: 'sh_6', restId: 'rest_shahi', name: 'Chicken Noodle (चिकन नूडल)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: false, desc: 'Stir-fried hakka noodles loaded with chicken strips.', variants: [{ label: '1 Plate', price: 140 }] },
+            { id: 'sh_5', restId: 'rest_shahi', name: 'Chicken Chilli (चिकन चिली)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: false, desc: 'Indo-Chinese chilli chicken tossed with capsicum & onion.', variants: [{ label: '1 Plate (प्लेट)', price: 180 }] },
+            { id: 'sh_6', restId: 'rest_shahi', name: 'Chicken Noodle (चिकन नूडल)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: false, desc: 'Stir-fried hakka noodles loaded with juicy chicken strips.', variants: [{ label: '1 Plate', price: 140 }] },
             { id: 'sh_7', restId: 'rest_shahi', name: 'Chicken Malai Tikka (चिकन मलाई टिक्का)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: true, desc: 'Creamy malai marinated boneless chicken tikka (8 Pcs).', variants: [{ label: '8 Pcs (8 पीस)', price: 180 }] },
             { id: 'sh_8', restId: 'rest_shahi', name: 'Chicken Tikka (चिकन टिक्का)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: false, desc: 'Smoky tandoori boneless spiced chicken chunks (8 Pcs).', variants: [{ label: '8 Pcs (8 पीस)', price: 170 }] },
             { id: 'sh_9', restId: 'rest_shahi', name: 'Chicken Afghani (चिकन अफगानी)', category: 'Chicken Starters (चिकन)', isVeg: false, bestseller: true, desc: 'Rich creamy Afghani style tandoori chicken.', variants: [{ label: 'Half (हॉफ)', price: 210 }, { label: 'Full (फुल)', price: 400 }] },
@@ -892,7 +781,7 @@
             { id: 'sh_52', restId: 'rest_shahi', name: 'Plain Rice (प्लेन राईस)', category: 'Rice & Biryani (राईस & बिरयानी)', isVeg: true, bestseller: false, desc: 'Steamed hot basmati rice.', variants: [{ label: 'Half (हॉफ)', price: 60 }, { label: 'Full (फुल)', price: 110 }] }
         ];
 
-        // Force reset localStorage if upgrading to v5
+        // Force reset localStorage if upgrading to v6 trial
         if (localStorage.getItem('gmf_version') !== DATA_VERSION) {
             localStorage.setItem('gmf_restaurants', JSON.stringify(DEFAULT_RESTAURANTS));
             localStorage.setItem('gmf_menu', JSON.stringify(DEFAULT_MENU));
@@ -907,20 +796,13 @@
         let commissionRate = parseFloat(localStorage.getItem('gmf_comm_rate')) || 5;
         let outOfStockIds = JSON.parse(localStorage.getItem('gmf_out_of_stock')) || [];
         let currentUser = JSON.parse(localStorage.getItem('gmf_logged_user')) || null;
-        let upiConfig = JSON.parse(localStorage.getItem('gmf_upi_config')) || {
-            upiId: '8825293104@ybl',
-            payeeName: 'Give My Food - Krish Kumar'
-        };
+        let activeCustomerOrderId = localStorage.getItem('gmf_active_order_id') || null;
 
         let activeRestaurantId = restaurants[0].id;
         let activeCategory = 'ALL';
         let activeDietFilter = 'ALL';
         let selectedVariants = {};
         let cart = {};
-        let isAdminUnlocked = false;
-        let isKitchenUnlocked = false;
-        let waitingForUpiReturn = false;
-        let upiTimerInterval = null;
 
         // --- MANDATORY USER LOGIN GATE ---
         function checkUserLoginGate() {
@@ -933,7 +815,6 @@
                 gate.classList.add('hidden');
                 gate.classList.remove('flex');
                 if (navUserText) navUserText.textContent = currentUser.name.split(' ')[0];
-                // Pre-fill checkout inputs
                 const cName = document.getElementById('custName');
                 const cPhone = document.getElementById('custPhone');
                 const cAddr = document.getElementById('custAddress');
@@ -952,7 +833,7 @@
             currentUser = { name, phone, savedAddress: '' };
             localStorage.setItem('gmf_logged_user', JSON.stringify(currentUser));
             checkUserLoginGate();
-            showToast(`Welcome, ${name}!`, 'You are now logged in. Min Order ₹100 • Free Delivery above ₹250!', 'success');
+            showToast(`Welcome, ${name}!`, 'Min Order ₹100 • Free Delivery above ₹250!', 'success');
         }
 
         function openUserProfileModal() {
@@ -980,6 +861,26 @@
             checkUserLoginGate();
         }
 
+        // --- SECRET SEARCH BAR LOGIN (827117 -> FOUNDER HUB | 6393 -> KITCHEN) ---
+        function handleSearchAndSecretCodes(val) {
+            const trimmed = (val || '').trim();
+            if (trimmed === SECRET_ADMIN_CODE) {
+                document.getElementById('searchInput').value = '';
+                renderMenu();
+                switchMainView('FOUNDER');
+                showToast('Founder Hub Unlocked', 'Welcome Krish Kumar! Verify payments & track commission.', 'success');
+                return;
+            }
+            if (trimmed === SECRET_KITCHEN_CODE) {
+                document.getElementById('searchInput').value = '';
+                renderMenu();
+                switchMainView('KITCHEN');
+                showToast('Kitchen Panel Unlocked', 'Manage live orders and dish stock.', 'success');
+                return;
+            }
+            renderMenu();
+        }
+
         // --- TIME-GATING CHECKS ---
         function isOrderingWindowOpen() {
             const hr = new Date().getHours();
@@ -998,100 +899,86 @@
             const liveDot = document.getElementById('liveStatusDot');
             const liveBadge = document.getElementById('liveHoursBadge');
             const headerChip = document.getElementById('headerOpenChip');
-            const closedBanner = document.getElementById('closedHoursBanner');
-            const sachinBadge = document.getElementById('sachinAvailabilityBadge');
 
             if (orderOpen) {
-                if (liveDot) liveDot.className = 'w-2 h-2 rounded-full bg-green-400 animate-pulse';
+                if (liveDot) liveDot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
                 if (liveBadge) liveBadge.textContent = 'LIVE NOW: 12:00 PM – 10:00 PM';
                 if (headerChip) {
                     headerChip.textContent = 'Open Now';
-                    headerChip.className = 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase flex-shrink-0';
+                    headerChip.className = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase flex-shrink-0';
                 }
-                if (closedBanner) closedBanner.classList.add('hidden');
-                if (sachinBadge) sachinBadge.textContent = 'Live Now';
             } else {
-                if (liveDot) liveDot.className = 'w-2 h-2 rounded-full bg-amber-300';
+                if (liveDot) liveDot.className = 'w-2 h-2 rounded-full bg-amber-400';
                 if (liveBadge) liveBadge.textContent = 'DELIVERY HOURS: 12:00 PM – 10:00 PM';
                 if (headerChip) {
-                    headerChip.textContent = 'Opens 12 PM';
-                    headerChip.className = 'bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase flex-shrink-0';
+                    headerChip.textContent = '12 PM – 10 PM';
+                    headerChip.className = 'bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full uppercase flex-shrink-0';
                 }
-                if (closedBanner) closedBanner.classList.remove('hidden');
-                if (sachinBadge) sachinBadge.textContent = '12 PM–10 PM';
             }
 
             const supportModalCallBtn = document.getElementById('supportModalCallBtn');
             const supportModalCallBtnText = document.getElementById('supportModalCallBtnText');
+            const supportModalLiveBadge = document.getElementById('supportModalLiveBadge');
+
             if (supportActive) {
-                if (supportModalCallBtn) supportModalCallBtn.className = 'w-full py-2.5 px-3 rounded-xl bg-emerald-600 text-white font-extrabold text-xs flex items-center justify-center space-x-2';
+                if (supportModalLiveBadge) {
+                    supportModalLiveBadge.textContent = 'CALLS LIVE (5 PM – 3 AM)';
+                    supportModalLiveBadge.className = 'text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-300';
+                }
+                if (supportModalCallBtn) supportModalCallBtn.className = 'w-full py-2.5 px-3 rounded-xl bg-matte-900 text-white font-extrabold text-xs flex items-center justify-center space-x-2';
                 if (supportModalCallBtnText) supportModalCallBtnText.textContent = 'Call Krish Now (8825293104)';
             } else {
-                if (supportModalCallBtn) supportModalCallBtn.className = 'w-full py-2.5 px-3 rounded-xl bg-gray-800 text-gray-400 border border-gray-700 font-bold text-xs flex items-center justify-center space-x-2';
+                if (supportModalLiveBadge) {
+                    supportModalLiveBadge.textContent = 'CALLS OPEN AT 5:00 PM';
+                    supportModalLiveBadge.className = 'text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300';
+                }
+                if (supportModalCallBtn) supportModalCallBtn.className = 'w-full py-2.5 px-3 rounded-xl bg-slate-200 text-slate-500 font-bold text-xs flex items-center justify-center space-x-2';
                 if (supportModalCallBtnText) supportModalCallBtnText.textContent = 'Calls Open 5 PM – 3 AM';
             }
         }
 
         function attemptOwnerCall() {
-            const currentRest = restaurants.find(r => r.id === activeRestaurantId) || restaurants[0];
-            if (isOrderingWindowOpen()) {
-                window.location.href = `tel:${currentRest.phone}`;
-            } else {
-                showToast('Sachin Singh Available 12 PM – 10 PM', `Call ${currentRest.phone} between 12:00 PM and 10:00 PM.`, 'warning');
-            }
+            window.location.href = `tel:${MASTER_CONTACT_PHONE}`;
         }
 
         function attemptSupportCall() {
             if (isSupportCallWindowActive()) {
-                window.location.href = `tel:${SUPPORT_OWNER_PHONE}`;
+                window.location.href = `tel:${MASTER_CONTACT_PHONE}`;
             } else {
                 openSupportModal('Order Not Delivered');
-                showToast('Support Calls: 5:00 PM – 3:00 AM', 'Please submit your number in the callback form below!', 'warning');
+                showToast('Support Calls: 5:00 PM – 3:00 AM', 'Direct voice calls open at 5:00 PM. Please submit your number below for a callback!', 'warning');
             }
         }
 
-        // --- RENDER FUNCTIONS (FIXED ADDRESS OVERFLOW) ---
+        // --- RENDER RESTAURANT HEADER & DROPDOWN ---
         function renderRestaurantTabs() {
-            const container = document.getElementById('restaurantTabs');
             const topDropdown = document.getElementById('topRestaurantDropdown');
-
-            // Short label inside <select> so mobile screen never stretches horizontally
             if (topDropdown) {
                 topDropdown.innerHTML = restaurants.map(r =>
-                    `<option value="${r.id}" ${r.id === activeRestaurantId ? 'selected' : ''}>🍛 ${r.shortDropdownName || 'Shahi Veg & Nonveg (Nawabganj)'}</option>`
-                ).join('') + `<option value="COMING_SOON">✨ + More Nawabganj Restaurants Coming Soon!</option>`;
+                    `<option value="${r.id}" ${r.id === activeRestaurantId ? 'selected' : ''}>${r.name}</option>`
+                ).join('') + `<option value="COMING_SOON">+ More Nawabganj Restaurants Coming Soon</option>`;
             }
-
-            container.innerHTML = restaurants.map(r => {
-                const active = r.id === activeRestaurantId;
-                return `
-                    <button onclick="selectRestaurant('${r.id}')" class="flex-shrink-0 max-w-[280px] sm:max-w-xs px-4 py-2.5 rounded-2xl border text-left transition ${active ? 'bg-brand-600/20 border-brand-500 text-white' : 'bg-gray-900 border-gray-800 text-gray-400'}">
-                        <div class="flex items-center justify-between space-x-2">
-                            <span class="font-extrabold text-xs truncate">${r.name}</span>
-                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 flex-shrink-0">★ ${r.rating || '4.8'}</span>
-                        </div>
-                        <p class="text-[10px] text-amber-300 truncate mt-0.5">📍 ${r.location}</p>
-                    </button>
-                `;
-            }).join('');
 
             const currentRest = restaurants.find(r => r.id === activeRestaurantId) || restaurants[0];
             document.getElementById('activeRestaurantBanner').innerHTML = `
-                <div class="min-w-0 flex-1 w-full">
+                <div class="min-w-0 flex-1">
                     <div class="flex flex-wrap items-center gap-2">
-                        <h2 class="text-sm sm:text-lg font-black text-white break-words">${currentRest.name}</h2>
-                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">${currentRest.prepTime || '25-35 mins'}</span>
+                        <h2 class="text-base sm:text-lg font-black text-slate-900 break-words">${currentRest.name}</h2>
+                        <span class="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-600 text-white">★ ${currentRest.rating || '4.8'}</span>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200">${currentRest.prepTime || '25–35 mins'}</span>
                     </div>
-                    <p class="text-xs text-amber-300 font-semibold mt-1 break-words leading-snug">
-                        <i class="fa-solid fa-location-dot mr-1"></i>${currentRest.location}
-                    </p>
-                    <p class="text-[11px] text-gray-400 mt-0.5 break-words">${currentRest.tagline}</p>
+                    <p class="text-xs text-slate-600 font-bold mt-1 break-words">${currentRest.hindiSubName || currentRest.location}</p>
+                    <p class="text-[11px] text-slate-500 mt-0.5 break-words">${currentRest.tagline}</p>
                 </div>
                 <div class="flex items-center gap-2 text-xs flex-shrink-0">
-                    <button type="button" onclick="attemptOwnerCall()" class="px-3 py-2 rounded-xl bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-extrabold flex items-center space-x-1.5">
-                        <i class="fa-solid fa-phone"></i>
-                        <span>${currentRest.phone}</span>
-                    </button>
+                    <a href="tel:${MASTER_CONTACT_PHONE}" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-300 font-extrabold flex items-center space-x-1.5 transition">
+                        <i class="fa-solid fa-phone text-emerald-600"></i>
+                        <span>${MASTER_CONTACT_PHONE}</span>
+                    </a>
+                    <a href="https://wa.me/91${MASTER_CONTACT_PHONE}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold flex items-center space-x-1.5 transition shadow-sm">
+                        <i class="fa-brands fa-whatsapp text-sm"></i>
+                        <span>WhatsApp</span>
+                    </a>
                 </div>
             `;
         }
@@ -1099,10 +986,14 @@
         function handleTopRestaurantSelect(val) {
             if (val === 'COMING_SOON') {
                 document.getElementById('topRestaurantDropdown').value = activeRestaurantId;
-                showToast('More Kitchens Coming Soon!', 'Contact Krish Kumar (8825293104) to partner.', 'info');
+                showToast('More Restaurants Coming Soon!', 'Want to list your restaurant in Nawabganj? Contact Krish Kumar on 8825293104.', 'info');
                 return;
             }
-            selectRestaurant(val);
+            activeRestaurantId = val;
+            activeCategory = 'ALL';
+            renderRestaurantTabs();
+            renderCategoryPills();
+            renderMenu();
         }
 
         function renderCategoryPills() {
@@ -1111,8 +1002,8 @@
             document.getElementById('categoryPills').innerHTML = categories.map(cat => {
                 const active = cat === activeCategory;
                 return `
-                    <button onclick="setCategory('${cat}')" class="flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold border transition ${active ? 'bg-white text-gray-950 border-white' : 'bg-gray-900 text-gray-400 border-gray-800'}">
-                        ${cat === 'ALL' ? 'All Items' : cat}
+                    <button onclick="setCategory('${cat}')" class="flex-shrink-0 px-3.5 py-2 rounded-xl text-xs font-extrabold border transition shadow-sm ${active ? 'bg-matte-900 text-white border-matte-900' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-400'}">
+                        ${cat === 'ALL' ? 'All Menu (52)' : cat}
                     </button>
                 `;
             }).join('');
@@ -1131,6 +1022,16 @@
                 return true;
             });
 
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full p-8 rounded-2xl bg-white border border-slate-200 text-center">
+                        <p class="text-sm font-extrabold text-slate-700">No dishes found matching "${query}"</p>
+                        <button onclick="document.getElementById('searchInput').value=''; renderMenu();" class="mt-2 px-4 py-2 rounded-xl bg-matte-900 text-white text-xs font-bold">Show Full Menu</button>
+                    </div>
+                `;
+                return;
+            }
+
             container.innerHTML = filtered.map(item => {
                 const isOutOfStock = outOfStockIds.includes(item.id);
                 const variants = (item.variants && item.variants.length > 0) ? item.variants : [{ label: 'Regular', price: item.price || 100 }];
@@ -1140,27 +1041,31 @@
                 const qty = cart[cartKey] || 0;
 
                 return `
-                    <div class="p-4 rounded-2xl ${isOutOfStock ? 'bg-gray-900/40 border-gray-800/60 opacity-65' : 'bg-gray-900/90 border-gray-800'} border flex flex-col justify-between gap-3">
+                    <div class="p-4 rounded-2xl ${isOutOfStock ? 'bg-slate-100 border-slate-200 opacity-60' : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm'} border flex flex-col justify-between gap-3 transition">
                         <div>
                             <div class="flex items-center justify-between gap-2 mb-1.5">
                                 <div class="flex items-center space-x-2">
-                                    <span class="w-4 h-4 rounded border ${item.isVeg ? 'border-green-500' : 'border-red-500'} flex items-center justify-center">
-                                        <span class="w-2 h-2 rounded-full ${item.isVeg ? 'bg-green-500' : 'bg-red-500'}"></span>
+                                    <span class="w-4 h-4 rounded border ${item.isVeg ? 'border-emerald-600' : 'border-rose-600'} flex items-center justify-center">
+                                        <span class="w-2 h-2 rounded-full ${item.isVeg ? 'bg-emerald-600' : 'bg-rose-600'}"></span>
                                     </span>
-                                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">${item.category}</span>
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">${item.category}</span>
                                 </div>
-                                ${isOutOfStock ? '<span class="text-[10px] font-extrabold bg-rose-500/20 text-rose-400 px-2 py-0.5 rounded-full">Out of Stock</span>' : (item.bestseller ? '<span class="text-[10px] font-extrabold bg-amber-500/15 text-amber-400 px-2 py-0.5 rounded-full">★ Bestseller</span>' : '')}
+                                ${isOutOfStock
+                                    ? '<span class="text-[10px] font-extrabold bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full">Out of Stock</span>'
+                                    : (item.bestseller ? '<span class="text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full">★ Bestseller</span>' : '')
+                                }
                             </div>
-                            <h4 class="font-extrabold text-white text-sm sm:text-base">${item.name}</h4>
-                            <p class="text-xs text-gray-400 mt-1">${item.desc || ''}</p>
+                            <h4 class="font-black text-slate-900 text-sm sm:text-base">${item.name}</h4>
+                            <p class="text-xs text-slate-500 mt-1 leading-relaxed">${item.desc || ''}</p>
 
+                            <!-- Half / Full / Piece Variant Selector -->
                             <div class="mt-3 flex flex-wrap gap-1.5">
                                 ${variants.map((v, idx) => {
                                     const vKey = `${item.id}__${idx}`;
                                     const vQty = cart[vKey] || 0;
                                     const isSelected = idx === selIdx;
                                     return `
-                                        <button type="button" onclick="selectItemVariant('${item.id}', ${idx})" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition flex items-center space-x-1 ${isSelected ? 'bg-brand-600/25 border-brand-500 text-white' : 'bg-gray-950 border-gray-800 text-gray-400'}">
+                                        <button type="button" onclick="selectItemVariant('${item.id}', ${idx})" class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold border transition flex items-center space-x-1 ${isSelected ? 'bg-matte-900 border-matte-900 text-white' : 'bg-slate-50 border-slate-300 text-slate-700 hover:bg-slate-100'}">
                                             <span>${v.label}: ₹${v.price}</span>
                                             ${vQty > 0 ? `<span class="ml-1 px-1.5 rounded-full bg-brand-500 text-white text-[10px] font-black">×${vQty}</span>` : ''}
                                         </button>
@@ -1169,21 +1074,21 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between pt-2.5 border-t border-gray-800/70">
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-100">
                             <div>
-                                <span class="text-base font-black text-white">₹${activeVariant.price}</span>
-                                <span class="text-[11px] text-gray-400 font-semibold ml-1">(${activeVariant.label})</span>
+                                <span class="text-base font-black text-slate-900">₹${activeVariant.price}</span>
+                                <span class="text-[11px] text-slate-500 font-semibold ml-1">(${activeVariant.label})</span>
                             </div>
 
                             ${isOutOfStock ? `
-                                <button disabled class="px-3.5 py-2 rounded-xl bg-gray-800 text-gray-500 font-extrabold text-xs">Sold Out</button>
+                                <button disabled class="px-3.5 py-2 rounded-xl bg-slate-200 text-slate-500 font-extrabold text-xs">Sold Out</button>
                             ` : (qty === 0 ? `
-                                <button onclick="updateCartQty('${cartKey}', 1)" class="px-4 py-2 rounded-xl bg-brand-600/20 hover:bg-brand-600 text-brand-400 hover:text-white border border-brand-500/40 font-extrabold text-xs transition">+ ADD</button>
+                                <button onclick="updateCartQty('${cartKey}', 1)" class="px-5 py-2 rounded-xl bg-white hover:bg-matte-900 text-matte-900 hover:text-white border-2 border-matte-900 font-black text-xs transition shadow-sm">+ ADD</button>
                             ` : `
-                                <div class="flex items-center space-x-2 bg-brand-600 rounded-xl px-2 py-1 text-white">
-                                    <button onclick="updateCartQty('${cartKey}', -1)" class="w-6 h-6 rounded-lg bg-black/20 font-black text-xs">-</button>
+                                <div class="flex items-center space-x-2.5 bg-matte-900 rounded-xl px-2.5 py-1.5 text-white shadow-sm">
+                                    <button onclick="updateCartQty('${cartKey}', -1)" class="w-6 h-6 rounded-lg bg-white/15 hover:bg-white/25 font-black text-xs">-</button>
                                     <span class="font-black text-xs px-1">${qty}</span>
-                                    <button onclick="updateCartQty('${cartKey}', 1)" class="w-6 h-6 rounded-lg bg-black/20 font-black text-xs">+</button>
+                                    <button onclick="updateCartQty('${cartKey}', 1)" class="w-6 h-6 rounded-lg bg-white/15 hover:bg-white/25 font-black text-xs">+</button>
                                 </div>
                             `)}
                         </div>
@@ -1194,14 +1099,6 @@
 
         function selectItemVariant(itemId, variantIdx) {
             selectedVariants[itemId] = variantIdx;
-            renderMenu();
-        }
-
-        function selectRestaurant(restId) {
-            activeRestaurantId = restId;
-            activeCategory = 'ALL';
-            renderRestaurantTabs();
-            renderCategoryPills();
             renderMenu();
         }
 
@@ -1216,8 +1113,8 @@
             ['ALL', 'VEG', 'NONVEG'].forEach(f => {
                 const btn = document.getElementById(f === 'ALL' ? 'filterAll' : (f === 'VEG' ? 'filterVeg' : 'filterNonVeg'));
                 btn.className = f === filter
-                    ? 'px-3.5 py-2.5 rounded-xl text-xs font-bold bg-brand-600 text-white flex items-center space-x-1.5 transition'
-                    : 'px-3.5 py-2.5 rounded-xl text-xs font-bold bg-gray-900 text-gray-300 border border-gray-800 flex items-center space-x-1.5 transition';
+                    ? 'px-3.5 py-2.5 rounded-xl text-xs font-extrabold bg-matte-900 text-white flex items-center space-x-1.5 shadow-sm transition'
+                    : 'px-3.5 py-2.5 rounded-xl text-xs font-extrabold bg-white text-slate-700 border border-slate-300 flex items-center space-x-1.5 shadow-sm transition';
             });
             renderMenu();
         }
@@ -1259,7 +1156,6 @@
                 }
             }
 
-            // Rule: ₹100 to ₹250 = ₹50 delivery charge. Above ₹250 (> 250) = FREE delivery (₹0)
             const isBelowMinOrder = subtotal > 0 && subtotal < MIN_ORDER_VALUE;
             const amountNeededForMin = Math.max(0, MIN_ORDER_VALUE - subtotal);
             const deliveryCharge = subtotal === 0 ? 0 : (subtotal > FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_CHARGE_BELOW_THRESHOLD);
@@ -1279,13 +1175,13 @@
 
             const progressText = document.getElementById('deliveryProgressText');
             if (subtotal === 0) {
-                progressText.innerHTML = `<i class="fa-solid fa-truck-fast text-brand-400 mr-1"></i>Min Order: <strong>₹100</strong> • ₹100–₹250: <strong>₹50 Delivery</strong> • Above ₹250: <span class="text-emerald-400 font-extrabold">FREE Delivery!</span>`;
+                progressText.innerHTML = `<i class="fa-solid fa-truck-fast text-brand-600 mr-1"></i>Min Order: <strong>₹100</strong> • ₹100–₹250: <strong>₹50 Delivery</strong> • Above ₹250: <span class="text-emerald-600 font-black">FREE Delivery!</span>`;
             } else if (isBelowMinOrder) {
-                progressText.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-400 mr-1"></i>Minimum order is <strong>₹100</strong>. Add <strong>₹${amountNeededForMin} more</strong> to place order!`;
+                progressText.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-600 mr-1"></i>Minimum order is <strong>₹100</strong>. Add <strong>₹${amountNeededForMin} more</strong> to checkout!`;
             } else if (subtotal <= FREE_DELIVERY_THRESHOLD) {
-                progressText.innerHTML = `<i class="fa-solid fa-fire text-amber-400 mr-1"></i>Order ₹100–₹250 has +₹50 delivery. Add <strong>₹${amountNeededForFree} more</strong> (above ₹250) for <span class="text-emerald-400 font-extrabold">FREE Delivery!</span>`;
+                progressText.innerHTML = `<i class="fa-solid fa-fire text-brand-600 mr-1"></i>Order ₹100–₹250 has +₹50 delivery. Add <strong>₹${amountNeededForFree} more</strong> (above ₹250) for <span class="text-emerald-600 font-black">FREE Delivery!</span>`;
             } else {
-                progressText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i><span class="text-emerald-400 font-extrabold">FREE Delivery Unlocked (Order &gt; ₹250)!</span> You saved ₹50.`;
+                progressText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i><span class="text-emerald-600 font-black">FREE Delivery Unlocked (Order &gt; ₹250)!</span> You saved ₹50.`;
             }
 
             // 2. Floating Cart Bar
@@ -1307,19 +1203,19 @@
                     delTag.textContent = `Min Order ₹100`;
                     delTag.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30';
                     subText.textContent = `Add ₹${amountNeededForMin} more to reach ₹100 minimum order`;
-                    checkoutBtn.className = 'px-4 py-3 rounded-xl bg-gray-800 text-gray-400 font-extrabold text-xs flex items-center space-x-2 cursor-not-allowed flex-shrink-0';
+                    checkoutBtn.className = 'px-4 py-3 rounded-xl bg-slate-800 text-slate-400 font-extrabold text-xs flex items-center space-x-2 cursor-not-allowed flex-shrink-0';
                     checkoutBtnText.textContent = `Add ₹${amountNeededForMin} More`;
                 } else if (deliveryCharge === 0) {
                     delTag.textContent = 'FREE DELIVERY';
                     delTag.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-                    subText.textContent = `Food ₹${subtotal} + ₹0 Delivery (Above ₹250!)`;
-                    checkoutBtn.className = 'px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-rose-600 text-white font-extrabold text-xs sm:text-sm flex items-center space-x-2 shadow-lg shadow-brand-500/25 flex-shrink-0';
+                    subText.textContent = `Food ₹${subtotal} + ₹0 Delivery (Saved ₹50!)`;
+                    checkoutBtn.className = 'px-4 sm:px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-black text-xs sm:text-sm flex items-center space-x-2 shadow-lg flex-shrink-0';
                     checkoutBtnText.textContent = 'Checkout & Pay';
                 } else {
                     delTag.textContent = '+₹50 Delivery';
                     delTag.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300';
                     subText.textContent = `Food ₹${subtotal} + ₹50 Delivery (Free above ₹250)`;
-                    checkoutBtn.className = 'px-4 sm:px-5 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-rose-600 text-white font-extrabold text-xs sm:text-sm flex items-center space-x-2 shadow-lg shadow-brand-500/25 flex-shrink-0';
+                    checkoutBtn.className = 'px-4 sm:px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-black text-xs sm:text-sm flex items-center space-x-2 shadow-lg flex-shrink-0';
                     checkoutBtnText.textContent = 'Checkout & Pay';
                 }
             }
@@ -1328,35 +1224,35 @@
             const listEl = document.getElementById('checkoutItemsList');
             if (listEl) {
                 listEl.innerHTML = lines.map(l => `
-                    <div class="flex items-center justify-between text-xs bg-gray-950 p-2.5 rounded-xl border border-gray-800">
+                    <div class="flex items-center justify-between text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                         <div class="min-w-0 pr-2">
-                            <p class="font-bold text-white truncate">${l.name}</p>
-                            <p class="text-[11px] text-gray-400">₹${l.price} × ${l.qty}</p>
+                            <p class="font-extrabold text-slate-900 truncate">${l.name}</p>
+                            <p class="text-[11px] text-slate-500 font-semibold">₹${l.price} × ${l.qty}</p>
                         </div>
                         <div class="flex items-center space-x-2 flex-shrink-0">
-                            <div class="flex items-center space-x-1.5 bg-gray-800 rounded-lg px-2 py-1">
-                                <button type="button" onclick="updateCartQty('${l.cartKey}', -1)" class="text-gray-300 font-black px-1">-</button>
-                                <span class="font-bold text-white">${l.qty}</span>
-                                <button type="button" onclick="updateCartQty('${l.cartKey}', 1)" class="text-gray-300 font-black px-1">+</button>
+                            <div class="flex items-center space-x-1.5 bg-white border border-slate-300 rounded-lg px-2 py-1">
+                                <button type="button" onclick="updateCartQty('${l.cartKey}', -1)" class="text-slate-700 font-black px-1">-</button>
+                                <span class="font-black text-slate-900">${l.qty}</span>
+                                <button type="button" onclick="updateCartQty('${l.cartKey}', 1)" class="text-slate-700 font-black px-1">+</button>
                             </div>
-                            <span class="font-extrabold text-white w-12 text-right">₹${l.lineTotal}</span>
+                            <span class="font-black text-slate-900 w-12 text-right">₹${l.lineTotal}</span>
                         </div>
                     </div>
                 `).join('');
 
                 document.getElementById('billSubtotal').textContent = `₹${subtotal}`;
                 document.getElementById('billDelivery').innerHTML = deliveryCharge === 0
-                    ? '<span class="text-emerald-400 font-extrabold">FREE (₹0)</span>'
-                    : '<span class="text-amber-300 font-extrabold">+₹50</span>';
+                    ? '<span class="text-emerald-600 font-black">FREE (₹0)</span>'
+                    : '<span class="text-amber-600 font-black">+₹50</span>';
                 document.getElementById('billGrandTotal').textContent = `₹${grandTotal}`;
 
                 const noticeEl = document.getElementById('checkoutDeliveryNotice');
                 if (subtotal <= FREE_DELIVERY_THRESHOLD) {
-                    noticeEl.className = 'my-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200';
-                    noticeEl.innerHTML = `<i class="fa-solid fa-circle-info mr-1"></i>Orders ₹100–₹250 have a <strong>₹50 delivery charge</strong>. Add <strong>₹${amountNeededForFree}</strong> more (above ₹250) for <strong>FREE Delivery</strong>!`;
+                    noticeEl.className = 'my-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 font-semibold';
+                    noticeEl.innerHTML = `<i class="fa-solid fa-circle-info mr-1 text-amber-600"></i>Orders ₹100–₹250 have a <strong>₹50 delivery charge</strong>. Add <strong>₹${amountNeededForFree}</strong> more (above ₹250) for <strong>FREE Delivery</strong>!`;
                 } else {
-                    noticeEl.className = 'my-3 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300';
-                    noticeEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i><strong>Awesome!</strong> Your order is above ₹250 so you get <strong>FREE Delivery (₹0)</strong>!`;
+                    noticeEl.className = 'my-3 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-semibold';
+                    noticeEl.innerHTML = `<i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i><strong>Awesome!</strong> Your order is above ₹250 so you get <strong>FREE Delivery (₹0)</strong>!`;
                 }
             }
         }
@@ -1365,7 +1261,7 @@
             const { totalItems, isBelowMinOrder, amountNeededForMin } = getCartBreakdown();
             if (totalItems === 0) return;
             if (isBelowMinOrder) {
-                showToast('Minimum Order ₹100', `Please add ₹${amountNeededForMin} more of food to reach the ₹100 minimum order value.`, 'warning');
+                showToast('Minimum Order ₹100', `Please add ₹${amountNeededForMin} more to reach the ₹100 minimum order.`, 'warning');
                 return;
             }
             if (!currentUser) {
@@ -1373,11 +1269,10 @@
                 return;
             }
 
-            // Reset to Step 1
+            document.getElementById('checkoutModalHeaderTitle').textContent = 'Checkout & Delivery Address';
             document.getElementById('checkoutStep1').classList.remove('hidden');
             document.getElementById('checkoutStep2').classList.add('hidden');
             document.getElementById('checkoutStep3').classList.add('hidden');
-            document.getElementById('qrVerifiedOverlay').classList.add('hidden');
 
             if (currentUser) {
                 document.getElementById('custName').value = currentUser.name;
@@ -1392,15 +1287,13 @@
         }
 
         function closeCheckoutModal() {
-            waitingForUpiReturn = false;
-            if (upiTimerInterval) clearInterval(upiTimerInterval);
             const modal = document.getElementById('checkoutModal');
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         }
 
-        // --- ZOMATO-STYLE SCANNER & AUTO-RETURN FLOW ---
-        function startZomatoStylePayment(e) {
+        // --- STEP 2: GENERATE EXACT PAYTM QR CODE (7464074739@ptyes) ---
+        function goToPaytmScannerStep(e) {
             e.preventDefault();
             const { subtotal, grandTotal, isBelowMinOrder } = getCartBreakdown();
             if (isBelowMinOrder || subtotal < MIN_ORDER_VALUE) {
@@ -1414,68 +1307,63 @@
                 return;
             }
 
-            // Save user's address for next time
             if (currentUser) {
                 currentUser.savedAddress = addr;
                 localStorage.setItem('gmf_logged_user', JSON.stringify(currentUser));
             }
 
-            // Populate UPI QR & Intent Link
-            document.getElementById('upiPayAmountText').textContent = `₹${grandTotal}`;
-            document.getElementById('checkoutUpiIdDisplay').textContent = upiConfig.upiId;
-            const upiUri = `upi://pay?pa=${encodeURIComponent(upiConfig.upiId)}&pn=${encodeURIComponent(upiConfig.payeeName)}&am=${grandTotal}&cu=INR&tn=${encodeURIComponent('GiveMyFood Nawabganj')}`;
-            document.getElementById('upiDeepLinkBtn').href = upiUri;
-            document.getElementById('upiQrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUri)}`;
+            // Build exact UPI URI for Mr Krish Kumar (7464074739@ptyes)
+            const upiUri = `upi://pay?pa=${PAYTM_UPI_ID}&pn=${encodeURIComponent(PAYTM_PAYEE_NAME)}&am=${grandTotal}&cu=INR&tn=${encodeURIComponent('GiveMyFood Order')}`;
 
-            // Switch to Scanner View (Step 2)
+            document.getElementById('checkoutModalHeaderTitle').textContent = 'Scan & Pay via Paytm / UPI';
+            document.getElementById('upiPayAmountText').textContent = `₹${grandTotal}`;
+            document.getElementById('checkoutUpiIdDisplay').textContent = PAYTM_UPI_ID;
+            document.getElementById('upiDeepLinkBtn').href = upiUri;
+
+            // Render 100% Scannable QR Code using QRCode.js
+            const qrContainer = document.getElementById('qrcodeCanvasContainer');
+            qrContainer.innerHTML = '';
+            try {
+                new QRCode(qrContainer, {
+                    text: upiUri,
+                    width: 175,
+                    height: 175,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            } catch (err) {
+                qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUri)}" class="w-44 h-44 mx-auto" alt="Paytm UPI QR">`;
+            }
+
             document.getElementById('checkoutStep1').classList.add('hidden');
             document.getElementById('checkoutStep2').classList.remove('hidden');
-
-            // Start 5-minute countdown
-            let secondsLeft = 299;
-            if (upiTimerInterval) clearInterval(upiTimerInterval);
-            upiTimerInterval = setInterval(() => {
-                secondsLeft--;
-                if (secondsLeft <= 0) {
-                    clearInterval(upiTimerInterval);
-                    return;
-                }
-                const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
-                const s = String(secondsLeft % 60).padStart(2, '0');
-                document.getElementById('upiCountdownTimer').textContent = `${m}:${s}`;
-            }, 1000);
+            document.getElementById('checkoutStep3').classList.add('hidden');
         }
 
         function backToCheckoutStep1() {
-            waitingForUpiReturn = false;
+            document.getElementById('checkoutModalHeaderTitle').textContent = 'Checkout & Delivery Address';
             document.getElementById('checkoutStep2').classList.add('hidden');
             document.getElementById('checkoutStep1').classList.remove('hidden');
         }
 
-        // When user taps "Pay via GPay / PhonePe", detect when they return to browser tab and auto-verify!
-        function notifyUpiAppOpened() {
-            waitingForUpiReturn = true;
-            document.getElementById('paymentLiveStatusText').textContent = 'Verifying Payment from UPI App...';
+        // --- VALIDATE 12-DIGIT UTR & START REASSURING "PAYMENT DONE • PREPARING ORDER" FLOW ---
+        function isPlausibleUtr(utr) {
+            if (!/^[0-9]{12}$/.test(utr)) return false;
+            // Block obvious dummy strings like 111111111111, 000000000000, 123456789012
+            if (/^(\d)\1{11}$/.test(utr)) return false;
+            if (utr === '123456789012' || utr === '987654321098') return false;
+            return true;
         }
 
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible' && waitingForUpiReturn) {
-                waitingForUpiReturn = false;
-                completeAutoVerifiedOrder('UPI_APP_AUTO');
+        function submitUtrAndStartPreparing(e) {
+            e.preventDefault();
+            const utr = document.getElementById('custUpiUtr').value.trim();
+            if (!isPlausibleUtr(utr)) {
+                showToast('Invalid 12-Digit UTR', 'Please enter a valid 12-digit UPI Reference / UTR number from your Paytm, PhonePe, or Google Pay receipt.', 'warning');
+                return;
             }
-        });
 
-        function completeAutoVerifiedOrder(method) {
-            if (upiTimerInterval) clearInterval(upiTimerInterval);
-            const overlay = document.getElementById('qrVerifiedOverlay');
-            overlay.classList.remove('hidden');
-
-            setTimeout(() => {
-                finalizeOrderRecord(method);
-            }, 900);
-        }
-
-        function finalizeOrderRecord(method) {
             const { subtotal, deliveryCharge, grandTotal, lines } = getCartBreakdown();
             if (lines.length === 0) return;
 
@@ -1492,59 +1380,234 @@
                 orderId,
                 timestamp,
                 restaurantName: currentRest.name,
-                ownerPhone: currentRest.phone,
+                ownerPhone: MASTER_CONTACT_PHONE,
                 custName,
                 custPhone,
                 dropLocation: `${custAddress} (Nawabganj)`,
                 subtotal,
                 deliveryCharge,
                 grandTotal,
-                upiRef: method === 'UPI_APP_AUTO' ? 'Auto-Verified UPI' : 'QR Scan Paid',
-                orderStatus: 'NEW (नया ऑर्डर)',
+                upiRef: utr,
+                // Starts in PREPARING so customer feels reassured & doesn't panic-call immediately, while Krish can Confirm or Reject (Fake Payment)
+                orderStatus: 'PREPARING',
                 itemsSummary: lines.map(l => `${l.qty}x ${l.name}`).join(', ')
             };
 
             orderLedger.unshift(newOrder);
             localStorage.setItem('gmf_orders', JSON.stringify(orderLedger));
+            activeCustomerOrderId = orderId;
+            localStorage.setItem('gmf_active_order_id', orderId);
+
             if (window.syncOrderToCloud) window.syncOrderToCloud(newOrder);
 
-            const itemLinesText = lines.map(l => `• ${l.qty} x ${l.name} = ₹${l.lineTotal}`).join('\n');
-            const deliveryLineText = deliveryCharge === 0 ? 'FREE (Order > ₹250)' : `₹${deliveryCharge} (Order ₹100–₹250)`;
-
-            const waText =
-`*🍔 NEW ORDER - GIVE MY FOOD (NAWABGANJ)*
-*Order ID:* ${orderId}
-*Payment:* ✅ *UPI PAID (₹${grandTotal})*
-----------------------------------
-*Customer:* ${custName}
-*Phone:* ${custPhone}
-*Delivery Address (Nawabganj):* ${custAddress}
-${custNotes ? `*Note:* ${custNotes}\n` : ''}----------------------------------
-*ITEMS ORDERED:*
-${itemLinesText}
-----------------------------------
-*Food Subtotal:* ₹${subtotal}
-*Delivery Charge:* ${deliveryLineText}
-*TOTAL PAID:* *₹${grandTotal}*`;
-
-            const waUrl = `https://wa.me/91${currentRest.phone}?text=${encodeURIComponent(waText)}`;
-
-            // Show Step 3 Zomato-style In-App Order Confirmation Interface
-            document.getElementById('checkoutStep2').classList.add('hidden');
-            document.getElementById('checkoutStep3').classList.remove('hidden');
-            document.getElementById('confirmedOrderIdTitle').textContent = `Order #${orderId} Confirmed!`;
-            document.getElementById('confirmedAddressText').textContent = `${custName} (${custPhone}) — ${custAddress}`;
-            document.getElementById('confirmedAmountText').textContent = `Total Paid via UPI: ₹${grandTotal}`;
-            document.getElementById('confirmedWaBtn').href = waUrl;
-
+            // Clear cart
             cart = {};
+            document.getElementById('custUpiUtr').value = '';
             renderMenu();
             updateCartUI();
             renderAdminDashboard();
             renderKitchenDashboard();
+            renderCustomerLiveTracker();
+
+            // Show Reassuring Step 3 Screen inside Modal
+            document.getElementById('checkoutStep2').classList.add('hidden');
+            document.getElementById('checkoutStep3').classList.remove('hidden');
+            renderStep3LiveOrderState(orderId);
+
+            // Also open WhatsApp to 8825293104 so Krish gets instant alert on his phone with the UTR
+            const itemLinesText = lines.map(l => `• ${l.qty} x ${l.name} = ₹${l.lineTotal}`).join('\n');
+            const deliveryLineText = deliveryCharge === 0 ? 'FREE (Order > ₹250)' : `₹${deliveryCharge} (Order ₹100–₹250)`;
+            const waText =
+`*🍔 NEW ORDER - GIVE MY FOOD (NAWABGANJ)*
+*Order ID:* ${orderId}
+*UPI Paid To:* ${PAYTM_UPI_ID}
+*Customer UTR:* *${utr}*
+*Amount:* *₹${grandTotal}*
+----------------------------------
+*Customer:* ${custName} (${custPhone})
+*Nawabganj Address:* ${custAddress}
+${custNotes ? `*Note:* ${custNotes}\n` : ''}----------------------------------
+*ITEMS:*
+${itemLinesText}
+----------------------------------
+*Food:* ₹${subtotal} | *Delivery:* ${deliveryLineText}
+*TOTAL:* *₹${grandTotal}*`;
+
+            const waUrl = `https://wa.me/91${MASTER_CONTACT_PHONE}?text=${encodeURIComponent(waText)}`;
+            window.open(waUrl, '_blank', 'noopener,noreferrer');
         }
 
-        // --- SUPPORT & ADMIN HELPERS ---
+        // --- LIVE CUSTOMER ORDER STATUS RENDERER (HANDLES "PREPARING", "CONFIRMED", & "FAKE_PAYMENT") ---
+        function openActiveOrderModal() {
+            if (!activeCustomerOrderId) return;
+            document.getElementById('checkoutStep1').classList.add('hidden');
+            document.getElementById('checkoutStep2').classList.add('hidden');
+            document.getElementById('checkoutStep3').classList.remove('hidden');
+            renderStep3LiveOrderState(activeCustomerOrderId);
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function renderStep3LiveOrderState(orderId) {
+            const ord = orderLedger.find(o => o.orderId === orderId);
+            const step3El = document.getElementById('checkoutStep3');
+            if (!ord || !step3El) return;
+
+            document.getElementById('checkoutModalHeaderTitle').textContent = `Live Order Status (${ord.orderId})`;
+
+            // CASE 1: KRISH REJECTED THE ORDER AS A FAKE PAYMENT!
+            if (ord.orderStatus === 'FAKE_PAYMENT') {
+                step3El.innerHTML = `
+                    <div class="p-5 rounded-3xl bg-rose-50 border-2 border-rose-600 text-center space-y-3 animate-slide-up">
+                        <div class="w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center mx-auto shadow-lg">
+                            <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+                        </div>
+                        <span class="px-3 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black uppercase tracking-wider">
+                            Payment Verification Failed
+                        </span>
+                        <h4 class="text-xl font-black text-rose-700">🚨 Fake / Unverified Payment Detected!</h4>
+                        <p class="text-xs text-rose-900 font-semibold leading-relaxed">
+                            We checked our Paytm Merchant account (<strong>${PAYTM_UPI_ID}</strong>), and <strong>₹${ord.grandTotal}</strong> for UTR <strong class="font-mono underline">${ord.upiRef}</strong> was <strong>NOT received</strong>.
+                        </p>
+                        <div class="p-3 rounded-xl bg-white border border-rose-300 text-left text-xs text-slate-700 space-y-1">
+                            <p class="font-extrabold text-rose-700">Please Pay Carefully:</p>
+                            <p>• Do not enter random or fake 12-digit UTR numbers.</p>
+                            <p>• If money was deducted from your bank, WhatsApp your payment screenshot to <strong>${MASTER_CONTACT_PHONE}</strong>.</p>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-2 pt-2">
+                            <a href="https://wa.me/91${MASTER_CONTACT_PHONE}?text=${encodeURIComponent(`Hi Krish, regarding Order ${ord.orderId} (UTR: ${ord.upiRef}), here is my payment screenshot:`)}" target="_blank" class="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs flex items-center justify-center space-x-1.5">
+                                <i class="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Send Screenshot on WhatsApp</span>
+                            </a>
+                            <button type="button" onclick="closeCheckoutModal()" class="py-3 px-4 rounded-xl bg-slate-200 text-slate-800 font-bold text-xs">Close</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // CASE 2: REASSURING "PAYMENT DONE • PREPARING YOUR ORDER" (OR CONFIRMED/OUT FOR DELIVERY)
+            let statusHeadline = 'Payment Done • Preparing Your Order!';
+            let statusSubtext = 'Relax! Your order is with the kitchen and is being prepared fresh. No need to call unless delayed.';
+            let badgeText = 'LIVE KITCHEN TRACKER';
+
+            if (ord.orderStatus === 'CONFIRMED') {
+                statusHeadline = 'Payment Verified • Cooking Your Meal!';
+                statusSubtext = 'Krish verified your Paytm UPI payment. Chef is preparing your food now!';
+                badgeText = 'PAYMENT VERIFIED ✓';
+            } else if (ord.orderStatus === 'ON_THE_WAY') {
+                statusHeadline = 'Order Out for Delivery in Nawabganj!';
+                statusSubtext = 'Your hot food parcel has left the kitchen and is on the way to your address.';
+                badgeText = 'OUT FOR DELIVERY 🛵';
+            } else if (ord.orderStatus === 'DELIVERED') {
+                statusHeadline = 'Order Delivered — Enjoy Your Meal!';
+                statusSubtext = 'Thank you for ordering with Give My Food!';
+                badgeText = 'DELIVERED ✅';
+            }
+
+            step3El.innerHTML = `
+                <div class="p-4 rounded-3xl bg-emerald-50 border-2 border-emerald-500 text-center space-y-3">
+                    <div class="w-16 h-16 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto pulse-green">
+                        <i class="fa-solid fa-fire-burner text-2xl"></i>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider">
+                        ${badgeText}
+                    </span>
+                    <h4 class="text-lg sm:text-xl font-black text-slate-900">${statusHeadline}</h4>
+                    <p class="text-xs text-slate-600 font-medium leading-relaxed">${statusSubtext}</p>
+
+                    <!-- Visual Step Progress -->
+                    <div class="grid grid-cols-3 gap-2 pt-2 text-[11px] font-extrabold">
+                        <div class="p-2 rounded-xl bg-emerald-600 text-white">1. Payment Done ✓</div>
+                        <div class="p-2 rounded-xl ${ord.orderStatus === 'PREPARING' || ord.orderStatus === 'CONFIRMED' || ord.orderStatus === 'ON_THE_WAY' || ord.orderStatus === 'DELIVERED' ? 'bg-matte-900 text-white' : 'bg-white text-slate-400'}">2. Preparing 🍳</div>
+                        <div class="p-2 rounded-xl ${ord.orderStatus === 'ON_THE_WAY' || ord.orderStatus === 'DELIVERED' ? 'bg-emerald-600 text-white' : 'bg-white text-slate-400 border border-slate-200'}">3. Delivery 🛵</div>
+                    </div>
+
+                    <div class="p-3 rounded-2xl bg-white border border-slate-200 text-left text-xs space-y-1">
+                        <div class="flex justify-between">
+                            <span class="font-bold text-slate-500">Order ID:</span>
+                            <span class="font-black text-slate-900">${ord.orderId} (UTR: ${ord.upiRef})</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-bold text-slate-500">Amount Logged:</span>
+                            <span class="font-black text-emerald-600">₹${ord.grandTotal}</span>
+                        </div>
+                        <p class="text-slate-700 font-semibold pt-1 border-t border-slate-100">📍 ${ord.dropLocation}</p>
+                        <p class="text-slate-500 text-[11px]">${ord.itemsSummary}</p>
+                    </div>
+
+                    <button type="button" onclick="closeCheckoutModal()" class="w-full py-3 rounded-xl bg-matte-900 text-white font-black text-xs">
+                        Back to Menu (Live Status Saved on Top)
+                    </button>
+                </div>
+            `;
+        }
+
+        // Renders the persistent banner at the top of the menu so the customer always sees "Preparing Order" or "Fake Payment Detected"
+        function renderCustomerLiveTracker() {
+            const banner = document.getElementById('liveOrderTrackerBanner');
+            const topBtn = document.getElementById('topTrackOrderBtn');
+            if (!activeCustomerOrderId) {
+                if (banner) banner.classList.add('hidden');
+                if (topBtn) topBtn.classList.add('hidden');
+                return;
+            }
+
+            const ord = orderLedger.find(o => o.orderId === activeCustomerOrderId);
+            if (!ord) {
+                if (banner) banner.classList.add('hidden');
+                if (topBtn) topBtn.classList.add('hidden');
+                return;
+            }
+
+            if (topBtn) topBtn.classList.remove('hidden');
+            banner.classList.remove('hidden');
+
+            if (ord.orderStatus === 'FAKE_PAYMENT') {
+                banner.className = 'rounded-2xl p-4 border-2 border-rose-600 bg-rose-50 text-rose-900 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                banner.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-rose-600 text-white">Order ${ord.orderId} Rejected</span>
+                            <h4 class="text-sm sm:text-base font-black text-rose-700 mt-1">🚨 Fake Payment Detected — Please Pay Carefully!</h4>
+                            <p class="text-xs text-rose-800 font-medium">Payment of ₹${ord.grandTotal} (UTR: ${ord.upiRef}) was not received in Paytm (${PAYTM_UPI_ID}).</p>
+                        </div>
+                    </div>
+                    <button onclick="openActiveOrderModal()" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs flex-shrink-0">
+                        View Alert Details
+                    </button>
+                `;
+            } else {
+                const statusMap = {
+                    'PREPARING': '✅ Payment Done • Preparing Your Order!',
+                    'CONFIRMED': '👨‍🍳 Payment Verified • Kitchen Cooking Your Order!',
+                    'ON_THE_WAY': '🛵 Out for Delivery in Nawabganj!',
+                    'DELIVERED': '🎉 Order Delivered!'
+                };
+                banner.className = 'rounded-2xl p-4 border-2 border-emerald-500 bg-emerald-50/90 text-slate-900 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                banner.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 pulse-green">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-matte-900 text-white">Live Order ${ord.orderId} • UTR: ${ord.upiRef}</span>
+                            <h4 class="text-sm sm:text-base font-black text-slate-900 mt-1">${statusMap[ord.orderStatus] || '✅ Payment Done • Preparing Your Order!'}</h4>
+                            <p class="text-xs text-slate-600 font-medium">${ord.itemsSummary} • Total: ₹${ord.grandTotal}</p>
+                        </div>
+                    </div>
+                    <button onclick="openActiveOrderModal()" class="px-4 py-2.5 rounded-xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs flex-shrink-0">
+                        Track Status
+                    </button>
+                `;
+            }
+        }
+
+        // --- SUPPORT & TERMS MODALS ---
         function openSupportModal(defaultIssue) {
             if (defaultIssue) document.getElementById('ticketIssueType').value = defaultIssue;
             if (currentUser) {
@@ -1576,10 +1639,10 @@ ${itemLinesText}
             localStorage.setItem('gmf_tickets', JSON.stringify(supportTickets));
             renderAdminDashboard();
 
-            const waLink = `https://wa.me/91${SUPPORT_OWNER_PHONE}?text=${encodeURIComponent(`*SUPPORT TICKET ${ticket.id}*\nIssue: ${issueType}\nName: ${customerName} (${customerPhone})\nDetails: ${orderDetails}`)}`;
+            const waLink = `https://wa.me/91${MASTER_CONTACT_PHONE}?text=${encodeURIComponent(`*SUPPORT TICKET ${ticket.id}*\nIssue: ${issueType}\nName: ${customerName} (${customerPhone})\nDetails: ${orderDetails}`)}`;
             window.open(waLink, '_blank', 'noopener,noreferrer');
             closeSupportModal();
-            showToast('Callback Requested', `Krish Kumar will call you on ${customerPhone}.`, 'success');
+            showToast('Callback Requested', `Krish Kumar (${MASTER_CONTACT_PHONE}) will call you on ${customerPhone}.`, 'success');
         }
 
         function openTermsModal() {
@@ -1594,65 +1657,37 @@ ${itemLinesText}
             modal.classList.remove('flex');
         }
 
-        function handleAdminAccess() {
-            if (isAdminUnlocked) {
-                switchMainView(document.getElementById('founderView').classList.contains('hidden') ? 'FOUNDER' : 'STUDENT');
-                return;
-            }
-            const modal = document.getElementById('pinModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
+        // --- ADMIN & KITCHEN ORDER STATUS CONTROL (CONFIRM OR REJECT FAKE PAYMENT) ---
+        function updateOrderStatus(orderId, newStatus) {
+            const ord = orderLedger.find(o => o.orderId === orderId);
+            if (ord) {
+                ord.orderStatus = newStatus;
+                localStorage.setItem('gmf_orders', JSON.stringify(orderLedger));
+                if (window.syncOrderStatusToCloud) window.syncOrderStatusToCloud(orderId, newStatus);
+                renderKitchenDashboard();
+                renderAdminDashboard();
+                renderCustomerLiveTracker();
+                if (activeCustomerOrderId === orderId) {
+                    renderStep3LiveOrderState(orderId);
+                }
 
-        function closePinModal() {
-            const modal = document.getElementById('pinModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function verifyAdminPin(e) {
-            e.preventDefault();
-            if (document.getElementById('adminPinInput').value.trim() === ADMIN_PIN) {
-                isAdminUnlocked = true;
-                document.getElementById('adminLockIcon').className = 'fa-solid fa-unlock text-emerald-400';
-                closePinModal();
-                switchMainView('FOUNDER');
-            } else {
-                showToast('Incorrect PIN', 'Enter your 6-digit Founder PIN.', 'warning');
-            }
-        }
-
-        function handleKitchenAccess() {
-            if (isKitchenUnlocked || isAdminUnlocked) {
-                switchMainView(document.getElementById('kitchenView').classList.contains('hidden') ? 'KITCHEN' : 'STUDENT');
-                return;
-            }
-            const modal = document.getElementById('kitchenPinModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeKitchenPinModal() {
-            const modal = document.getElementById('kitchenPinModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function verifyKitchenPin(e) {
-            e.preventDefault();
-            const pin = document.getElementById('kitchenPinInput').value.trim();
-            if (pin === KITCHEN_PIN || pin === ADMIN_PIN) {
-                isKitchenUnlocked = true;
-                closeKitchenPinModal();
-                switchMainView('KITCHEN');
-            } else {
-                showToast('Incorrect PIN', 'Use Kitchen Counter PIN: 6393', 'warning');
+                if (newStatus === 'FAKE_PAYMENT') {
+                    showToast('Order Rejected as Fake Payment', `Customer screen for ${orderId} now displays "Fake Payment Detected — Please Pay Carefully".`, 'warning');
+                } else {
+                    showToast('Order Updated', `${orderId} status set to ${newStatus}.`, 'success');
+                }
             }
         }
 
         function switchKitchenTab(tab) {
             document.getElementById('kitchenOrdersPanel').classList.toggle('hidden', tab !== 'ORDERS');
             document.getElementById('kitchenStockPanel').classList.toggle('hidden', tab !== 'STOCK');
+            document.getElementById('kitchenTabOrdersBtn').className = tab === 'ORDERS'
+                ? 'py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center space-x-2 border transition bg-matte-900 text-white border-matte-900 shadow-md'
+                : 'py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center space-x-2 border transition bg-white text-slate-700 border-slate-300';
+            document.getElementById('kitchenTabStockBtn').className = tab === 'STOCK'
+                ? 'py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center space-x-2 border transition bg-matte-900 text-white border-matte-900 shadow-md'
+                : 'py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center space-x-2 border transition bg-white text-slate-700 border-slate-300';
             renderKitchenDashboard();
         }
 
@@ -1674,15 +1709,42 @@ ${itemLinesText}
             renderMenu();
         }
 
-        function updateOrderStatus(orderId, newStatus) {
-            const ord = orderLedger.find(o => o.orderId === orderId);
-            if (ord) {
-                ord.orderStatus = newStatus;
-                localStorage.setItem('gmf_orders', JSON.stringify(orderLedger));
-                if (window.syncOrderStatusToCloud) window.syncOrderStatusToCloud(orderId, newStatus);
-                renderKitchenDashboard();
-                renderAdminDashboard();
-            }
+        function renderOrderControlCard(o) {
+            const isFake = o.orderStatus === 'FAKE_PAYMENT';
+            return `
+                <div class="p-4 rounded-2xl ${isFake ? 'bg-rose-50 border-2 border-rose-500' : 'bg-slate-50 border border-slate-200'} space-y-2.5 text-xs">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2.5 py-1 rounded-lg bg-matte-900 text-white font-black">${o.orderId}</span>
+                            <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 font-mono font-black">
+                                UTR: ${o.upiRef} • ₹${o.grandTotal}
+                            </span>
+                        </div>
+                        <span class="font-black px-2.5 py-1 rounded-full ${isFake ? 'bg-rose-600 text-white' : 'bg-emerald-100 text-emerald-800'}">
+                            ${o.orderStatus}
+                        </span>
+                    </div>
+                    <p class="font-black text-slate-900 text-sm">${o.itemsSummary}</p>
+                    <p class="text-slate-700 font-semibold">📍 ${o.dropLocation}</p>
+                    <p class="text-slate-500">Customer: <strong class="text-slate-900">${o.custName}</strong> • <a href="tel:${o.custPhone}" class="text-emerald-600 underline font-extrabold">${o.custPhone}</a> • ${o.timestamp}</p>
+
+                    <!-- Action Buttons: Verify Payment, Out for Delivery, Delivered, OR Reject Fake Payment -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                        <button onclick="updateOrderStatus('${o.orderId}', 'CONFIRMED')" class="py-2 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold">
+                            ✅ Confirm Payment
+                        </button>
+                        <button onclick="updateOrderStatus('${o.orderId}', 'ON_THE_WAY')" class="py-2 px-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold">
+                            🛵 Out for Delivery
+                        </button>
+                        <button onclick="updateOrderStatus('${o.orderId}', 'DELIVERED')" class="py-2 px-2 rounded-xl bg-matte-900 hover:bg-slate-800 text-white font-extrabold">
+                            🎉 Delivered
+                        </button>
+                        <button onclick="updateOrderStatus('${o.orderId}', 'FAKE_PAYMENT')" class="py-2 px-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold">
+                            🚨 Reject (Fake UTR)
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
         function renderKitchenDashboard() {
@@ -1692,23 +1754,8 @@ ${itemLinesText}
             const ordersContainer = document.getElementById('kitchenLiveOrdersList');
             if (ordersContainer) {
                 ordersContainer.innerHTML = orderLedger.length === 0
-                    ? `<div class="p-8 rounded-2xl bg-gray-900 border border-gray-800 text-center text-xs text-gray-400">No incoming orders yet.</div>`
-                    : orderLedger.map(o => `
-                        <div class="p-4 rounded-2xl bg-gray-900 border border-emerald-500/30 space-y-2 text-xs">
-                            <div class="flex justify-between font-black">
-                                <span class="text-brand-400">${o.orderId} • ₹${o.grandTotal}</span>
-                                <span class="text-amber-300">${o.orderStatus}</span>
-                            </div>
-                            <p class="font-bold text-white">${o.itemsSummary}</p>
-                            <p class="text-gray-300">📍 ${o.dropLocation}</p>
-                            <p class="text-gray-400">${o.custName} • <a href="tel:${o.custPhone}" class="text-emerald-400 underline font-bold">${o.custPhone}</a></p>
-                            <div class="grid grid-cols-3 gap-2 pt-2">
-                                <button onclick="updateOrderStatus('${o.orderId}', 'COOKING')" class="py-2 rounded-xl bg-amber-500/20 text-amber-300 font-bold">Cooking</button>
-                                <button onclick="updateOrderStatus('${o.orderId}', 'ON THE WAY')" class="py-2 rounded-xl bg-blue-500/20 text-blue-300 font-bold">Sent</button>
-                                <button onclick="updateOrderStatus('${o.orderId}', 'DELIVERED')" class="py-2 rounded-xl bg-emerald-600 text-white font-bold">Delivered</button>
-                            </div>
-                        </div>
-                    `).join('');
+                    ? `<div class="p-8 rounded-2xl bg-white border border-slate-200 text-center text-xs text-slate-400 font-semibold">No incoming orders right now.</div>`
+                    : orderLedger.map(o => renderOrderControlCard(o)).join('');
             }
 
             const stockContainer = document.getElementById('kitchenStockList');
@@ -1718,12 +1765,12 @@ ${itemLinesText}
                 stockContainer.innerHTML = items.map(item => {
                     const isOut = outOfStockIds.includes(item.id);
                     return `
-                        <div class="p-3.5 rounded-2xl bg-gray-900 border border-gray-800 flex items-center justify-between gap-2">
+                        <div class="p-3.5 rounded-2xl bg-white border border-slate-200 flex items-center justify-between gap-2 shadow-sm">
                             <div class="min-w-0">
-                                <h4 class="font-extrabold text-white text-xs truncate">${item.name}</h4>
-                                <span class="text-[11px] font-bold ${isOut ? 'text-rose-400' : 'text-emerald-400'}">${isOut ? 'Out of Stock' : 'Available'}</span>
+                                <h4 class="font-extrabold text-slate-900 text-xs truncate">${item.name}</h4>
+                                <span class="text-[11px] font-bold ${isOut ? 'text-rose-600' : 'text-emerald-600'}">${isOut ? 'Out of Stock' : 'Available'}</span>
                             </div>
-                            <button onclick="toggleItemStock('${item.id}')" class="px-3 py-2 rounded-xl font-black text-xs flex-shrink-0 ${isOut ? 'bg-rose-600 text-white' : 'bg-emerald-600 text-white'}">
+                            <button onclick="toggleItemStock('${item.id}')" class="px-3 py-2 rounded-xl font-black text-xs flex-shrink-0 ${isOut ? 'bg-rose-600 text-white' : 'bg-matte-900 text-white'}">
                                 ${isOut ? 'Turn ON' : 'Turn OFF'}
                             </button>
                         </div>
@@ -1738,16 +1785,7 @@ ${itemLinesText}
             document.getElementById('kitchenView').classList.toggle('hidden', view !== 'KITCHEN');
             if (view === 'FOUNDER') renderAdminDashboard();
             if (view === 'KITCHEN') renderKitchenDashboard();
-        }
-
-        function savePaymentSettings(e) {
-            e.preventDefault();
-            upiConfig = {
-                upiId: document.getElementById('adminUpiIdInput').value.trim(),
-                payeeName: document.getElementById('adminUpiNameInput').value.trim()
-            };
-            localStorage.setItem('gmf_upi_config', JSON.stringify(upiConfig));
-            showToast('Saved', `UPI ID updated to ${upiConfig.upiId}`, 'success');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function updateCommissionRate(val) {
@@ -1757,14 +1795,8 @@ ${itemLinesText}
         }
 
         function renderAdminDashboard() {
-            const upiInput = document.getElementById('adminUpiIdInput');
-            const upiNameInput = document.getElementById('adminUpiNameInput');
-            if (upiInput && upiNameInput) {
-                upiInput.value = upiConfig.upiId;
-                upiNameInput.value = upiConfig.payeeName;
-            }
-
-            const foodVolume = orderLedger.reduce((sum, o) => sum + (o.subtotal || 0), 0);
+            const validOrders = orderLedger.filter(o => o.orderStatus !== 'FAKE_PAYMENT');
+            const foodVolume = validOrders.reduce((sum, o) => sum + (o.subtotal || 0), 0);
             document.getElementById('statTotalOrders').textContent = orderLedger.length;
             document.getElementById('statFoodVolume').textContent = `₹${foodVolume}`;
             document.getElementById('statCommissionEarned').textContent = `₹${Math.round((foodVolume * commissionRate) / 100)}`;
@@ -1773,18 +1805,21 @@ ${itemLinesText}
             const ledgerList = document.getElementById('adminOrderLedgerList');
             if (ledgerList) {
                 ledgerList.innerHTML = orderLedger.length === 0
-                    ? `<p class="text-xs text-gray-500 py-3 text-center">No orders logged yet.</p>`
-                    : orderLedger.map(o => `
-                        <div class="p-3 rounded-xl bg-gray-950 border border-gray-800 flex justify-between gap-2 text-xs">
+                    ? `<p class="text-xs text-slate-400 py-4 text-center font-semibold">No orders logged yet. Place a test order from the menu to test Confirm & Fake Payment Reject!</p>`
+                    : orderLedger.map(o => renderOrderControlCard(o)).join('');
+            }
+
+            const ticketList = document.getElementById('adminSupportTicketList');
+            if (ticketList) {
+                ticketList.innerHTML = supportTickets.length === 0
+                    ? `<p class="text-xs text-slate-400 py-3 text-center">No pending callback requests.</p>`
+                    : supportTickets.map(t => `
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2 text-xs">
                             <div>
-                                <span class="font-extrabold text-brand-400">${o.orderId}</span> • <strong class="text-white">${o.custName} (${o.custPhone})</strong>
-                                <p class="text-gray-400 text-[11px]">${o.dropLocation}</p>
-                                <p class="text-gray-300 text-[11px]">${o.itemsSummary}</p>
+                                <span class="font-black text-rose-600">${t.issueType}</span> • <strong class="text-slate-900">${t.customerName} (${t.customerPhone})</strong>
+                                <p class="text-slate-500 text-[11px]">${t.orderDetails} • ${t.createdAt}</p>
                             </div>
-                            <div class="text-right flex-shrink-0">
-                                <p class="font-bold text-white">₹${o.grandTotal}</p>
-                                <p class="text-emerald-400 font-extrabold">Cut: ₹${((o.subtotal * commissionRate) / 100).toFixed(1)}</p>
-                            </div>
+                            <a href="tel:${t.customerPhone}" class="px-3 py-1.5 rounded-lg bg-matte-900 text-white font-bold text-xs">Call</a>
                         </div>
                     `).join('');
             }
@@ -1792,9 +1827,27 @@ ${itemLinesText}
 
         function clearOrderHistory() {
             orderLedger = [];
+            activeCustomerOrderId = null;
+            localStorage.removeItem('gmf_active_order_id');
             localStorage.setItem('gmf_orders', JSON.stringify(orderLedger));
             renderAdminDashboard();
+            renderCustomerLiveTracker();
         }
+
+        function clearSupportTickets() {
+            supportTickets = [];
+            localStorage.setItem('gmf_tickets', JSON.stringify(supportTickets));
+            renderAdminDashboard();
+        }
+
+        // Listen for localStorage changes across tabs so if Krish rejects in another tab, customer tab updates live
+        window.addEventListener('storage', () => {
+            orderLedger = JSON.parse(localStorage.getItem('gmf_orders')) || [];
+            outOfStockIds = JSON.parse(localStorage.getItem('gmf_out_of_stock')) || [];
+            renderMenu();
+            renderCustomerLiveTracker();
+            if (activeCustomerOrderId) renderStep3LiveOrderState(activeCustomerOrderId);
+        });
 
         let toastTimer = null;
         function showToast(title, message, type = 'info') {
@@ -1817,8 +1870,88 @@ ${itemLinesText}
             renderCategoryPills();
             renderMenu();
             updateCartUI();
+            renderCustomerLiveTracker();
             setInterval(refreshAllTimeBadges, 30000);
         };
+    </script>
+
+    <!-- REAL-TIME FIREBASE SYNC (SO WHEN KRISH CLICKS REJECT FAKE PAYMENT ON HIS PHONE, CUSTOMER PHONE UPDATES INSTANTLY) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        (async function initCloudSync() {
+            try {
+                if (typeof __firebase_config === 'undefined' || !__firebase_config) return;
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'give-my-food-nawabganj';
+
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                const db = getFirestore(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (!user) return;
+
+                    const stockDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'kitchen_state', 'stock_config');
+                    onSnapshot(stockDocRef, (snap) => {
+                        if (snap.exists()) {
+                            const data = snap.data();
+                            if (Array.isArray(data.outOfStockIds)) {
+                                outOfStockIds = data.outOfStockIds;
+                                localStorage.setItem('gmf_out_of_stock', JSON.stringify(outOfStockIds));
+                                renderMenu();
+                                renderKitchenDashboard();
+                            }
+                        }
+                    }, (err) => console.warn(err));
+
+                    const ordersColRef = collection(db, 'artifacts', appId, 'public', 'data', 'live_orders');
+                    onSnapshot(ordersColRef, (snap) => {
+                        const cloudOrders = [];
+                        snap.forEach(d => cloudOrders.push(d.data()));
+                        if (cloudOrders.length > 0) {
+                            cloudOrders.sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+                            orderLedger = cloudOrders;
+                            localStorage.setItem('gmf_orders', JSON.stringify(orderLedger));
+                            renderAdminDashboard();
+                            renderKitchenDashboard();
+                            renderCustomerLiveTracker();
+                            if (activeCustomerOrderId) renderStep3LiveOrderState(activeCustomerOrderId);
+                        }
+                    }, (err) => console.warn(err));
+
+                    window.syncStockToCloud = async (ids) => {
+                        if (!auth.currentUser) return;
+                        await setDoc(stockDocRef, { outOfStockIds: ids, updatedAt: Date.now() });
+                    };
+
+                    window.syncOrderToCloud = async (orderObj) => {
+                        if (!auth.currentUser) return;
+                        const ordRef = doc(db, 'artifacts', appId, 'public', 'data', 'live_orders', orderObj.orderId);
+                        await setDoc(ordRef, { ...orderObj, createdAtMs: Date.now() });
+                    };
+
+                    window.syncOrderStatusToCloud = async (orderId, status) => {
+                        if (!auth.currentUser) return;
+                        const target = orderLedger.find(o => o.orderId === orderId);
+                        if (target) {
+                            const ordRef = doc(db, 'artifacts', appId, 'public', 'data', 'live_orders', orderId);
+                            await setDoc(ordRef, { ...target, orderStatus: status });
+                        }
+                    };
+                });
+            } catch (e) {
+                console.warn('Standalone mode:', e);
+            }
+        })();
     </script>
 </body>
 </html>
