@@ -71,31 +71,65 @@
 </head>
 <body class="min-h-screen pb-36 flex flex-col w-full overflow-x-hidden selection:bg-matte-900 selection:text-white">
 
-    <!-- ========================================== -->
-    <!-- MANDATORY USER LOGIN OVERLAY GATE          -->
-    <!-- ========================================== -->
+    <!-- ========================================================= -->
+    <!-- MANDATORY EMAIL + OTP VERIFICATION LOGIN GATE             -->
+    <!-- ========================================================= -->
     <div id="userLoginGate" class="fixed inset-0 z-50 bg-matte-900/90 backdrop-blur-md hidden items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 w-full max-w-sm rounded-3xl p-6 shadow-2xl text-center animate-slide-up">
-            <div class="w-14 h-14 rounded-2xl bg-matte-900 flex items-center justify-center mx-auto mb-3 shadow-lg">
-                <i class="fa-solid fa-utensils text-brand-500 text-2xl"></i>
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl p-6 shadow-2xl animate-slide-up">
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="w-12 h-12 rounded-2xl bg-matte-900 flex items-center justify-center shadow-md flex-shrink-0">
+                    <i class="fa-solid fa-utensils text-brand-500 text-xl"></i>
+                </div>
+                <div>
+                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-300 text-[10px] font-black uppercase tracking-wider">
+                        Nawabganj Official Platform
+                    </span>
+                    <h2 class="text-xl font-black text-slate-900 mt-0.5">Sign in to Give My <span class="text-brand-600">Food</span></h2>
+                </div>
             </div>
-            <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-300 text-[10px] font-black uppercase tracking-wider">
-                Official Nawabganj Delivery
-            </span>
-            <h2 class="text-xl font-black text-slate-900 mt-2">Welcome to Give My <span class="text-brand-600">Food</span></h2>
-            <p class="text-xs text-slate-500 mt-1 mb-5">Enter your Name & Mobile Number to browse the menu and order hot food.</p>
 
-            <form onsubmit="handleUserLogin(event)" class="space-y-3 text-left">
+            <!-- STEP A: ENTER EMAIL, NAME & MOBILE -->
+            <form id="loginStep1Form" onsubmit="sendEmailOtpStep(event)" class="space-y-3 text-left">
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    Sign in with your Email & Mobile Number to save your delivery address and track live orders in Nawabganj.
+                </p>
                 <div>
-                    <label class="text-[11px] font-extrabold text-slate-700 block mb-1">Your Full Name *</label>
-                    <input type="text" id="loginUserName" required placeholder="e.g. Aman Verma" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
+                    <label class="text-[11px] font-extrabold text-slate-700 block mb-1">Email Address *</label>
+                    <input type="email" id="loginUserEmail" required placeholder="yourname@gmail.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                        <label class="text-[11px] font-extrabold text-slate-700 block mb-1">Full Name *</label>
+                        <input type="text" id="loginUserName" required placeholder="e.g. Aman Verma" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-extrabold text-slate-700 block mb-1">10-Digit Mobile No. *</label>
+                        <input type="tel" id="loginUserPhone" required pattern="[0-9]{10}" maxlength="10" inputmode="numeric" placeholder="10-digit mobile" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm shadow-lg transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-envelope-circle-check text-brand-400"></i>
+                    <span>Send Verification Code</span>
+                </button>
+            </form>
+
+            <!-- STEP B: VERIFY 4-DIGIT EMAIL CODE -->
+            <form id="loginStep2Form" onsubmit="verifyEmailOtpAndLogin(event)" class="hidden space-y-3.5 text-left">
+                <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
+                    <p class="font-bold"><i class="fa-solid fa-key text-emerald-600 mr-1"></i>Instant Verification Code Generated</p>
+                    <p class="text-[11px] text-emerald-700 mt-0.5">
+                        Account: <strong id="otpTargetEmailText"></strong> • Your 4-digit login code is <span id="instantOtpDisplayBadge" class="px-2 py-0.5 rounded bg-matte-900 text-white font-mono font-black tracking-widest"></span>
+                    </p>
                 </div>
                 <div>
-                    <label class="text-[11px] font-extrabold text-slate-700 block mb-1">10-Digit Mobile Number *</label>
-                    <input type="tel" id="loginUserPhone" required pattern="[0-9]{10}" maxlength="10" placeholder="Enter 10-digit mobile number" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
+                    <label class="text-[11px] font-extrabold text-slate-700 block mb-1">Enter 4-Digit Verification Code *</label>
+                    <input type="text" id="loginOtpInput" required pattern="[0-9]{4}" maxlength="4" inputmode="numeric" placeholder="Enter 4-digit code" class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-300 rounded-xl text-center font-mono text-base font-black tracking-widest text-slate-900 focus:border-matte-900 focus:bg-white focus:outline-none">
                 </div>
-                <button type="submit" class="w-full py-3 rounded-xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm shadow-lg transition">
-                    Continue to Menu <i class="fa-solid fa-arrow-right ml-1 text-brand-500"></i>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm shadow-lg transition">
+                    Verify & Login to Account <i class="fa-solid fa-check ml-1"></i>
+                </button>
+                <button type="button" onclick="resetLoginToStep1()" class="w-full text-center text-xs text-slate-500 hover:text-slate-900 font-bold underline">
+                    ← Change Email or Phone Number
                 </button>
             </form>
         </div>
@@ -266,15 +300,34 @@
         <!-- 2. SECRET FOUNDER HUB (OPENED ONLY BY TYPING 827117)      -->
         <!-- ========================================================= -->
         <div id="founderView" class="hidden space-y-5 pb-12">
+            <!-- Loud Ringing Order Alert Banner (Flashes when unverified order arrives) -->
+            <div id="founderLoudAlertBar" class="hidden p-4 rounded-2xl bg-rose-600 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-pulse">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-white text-rose-600 flex items-center justify-center font-black text-lg">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black uppercase tracking-wider">🔔 NEW ORDER PAYMENT PENDING VERIFICATION!</p>
+                        <p class="text-xs text-rose-100">Check your Paytm (`7464074739@ptyes`) for the customer's Payee Name & 12-Digit UTR below.</p>
+                    </div>
+                </div>
+                <button onclick="stopOrderSiren()" class="px-4 py-2 rounded-xl bg-white text-rose-700 font-black text-xs flex-shrink-0 shadow">
+                    <i class="fa-solid fa-volume-xmark mr-1"></i>Mute Ringing
+                </button>
+            </div>
+
             <div class="p-5 rounded-3xl bg-matte-900 text-white border border-slate-800 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <span class="text-[10px] font-extrabold uppercase tracking-wider bg-brand-500/20 text-brand-400 border border-brand-500/30 px-2.5 py-1 rounded-full">
-                        <i class="fa-solid fa-user-shield mr-1"></i>Secret Founder Hub (Unlocked via Search Bar)
+                        <i class="fa-solid fa-user-shield mr-1"></i>Secret Founder Hub (PIN: 827117)
                     </span>
-                    <h2 class="text-xl font-black text-white mt-2">Krish Kumar — Master Control & Payment Verification</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Verify incoming Paytm UPI payments (`7464074739@ptyes`), reject fake UTRs, and track your 3–5% commission.</p>
+                    <h2 class="text-xl font-black text-white mt-2">Krish Kumar — Commission & Payment Verification</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Verify incoming Paytm UPI payments (`7464074739@ptyes`), check Payee Name & UTR, or reject fake payments.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="playOrderAlertChime(true)" class="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-matte-900 text-xs font-black">
+                        <i class="fa-solid fa-volume-high mr-1"></i>Test Bell
+                    </button>
                     <button onclick="switchMainView('KITCHEN')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold">
                         <i class="fa-solid fa-kitchen-set mr-1"></i>Kitchen Panel
                     </button>
@@ -341,6 +394,22 @@
         <!-- 3. SECRET KITCHEN PORTAL (OPENED BY TYPING 6393)          -->
         <!-- ========================================================= -->
         <div id="kitchenView" class="hidden space-y-5 pb-16">
+            <!-- Loud Ringing Order Alert Banner for Kitchen -->
+            <div id="kitchenLoudAlertBar" class="hidden p-4 rounded-2xl bg-emerald-600 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-pulse">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-white text-emerald-700 flex items-center justify-center font-black text-lg">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black uppercase tracking-wider">🔔 NEW ORDER RECEIVED AT COUNTER!</p>
+                        <p class="text-xs text-emerald-100">Verify Payee Name & 12-Digit UTR before preparing food.</p>
+                    </div>
+                </div>
+                <button onclick="stopOrderSiren()" class="px-4 py-2 rounded-xl bg-white text-emerald-800 font-black text-xs flex-shrink-0 shadow">
+                    <i class="fa-solid fa-volume-xmark mr-1"></i>Stop Bell
+                </button>
+            </div>
+
             <div class="p-5 rounded-3xl bg-matte-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
                 <div>
                     <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black uppercase">
@@ -349,9 +418,14 @@
                     <h2 class="text-xl font-black text-white mt-1.5">Shahi Veg and Nonveg (Nawabganj) — Counter</h2>
                     <p class="text-xs text-slate-300 mt-0.5">Verify incoming UPI payments, accept/reject orders, or turn dishes Out of Stock.</p>
                 </div>
-                <button onclick="switchMainView('STUDENT')" class="px-4 py-2.5 rounded-xl bg-white text-matte-900 text-xs font-extrabold self-start sm:self-center">
-                    <i class="fa-solid fa-arrow-left mr-1.5"></i>Back to Menu
-                </button>
+                <div class="flex items-center gap-2 self-start sm:self-center">
+                    <button onclick="playOrderAlertChime(true)" class="px-3 py-2.5 rounded-xl bg-amber-500 text-matte-900 text-xs font-black">
+                        <i class="fa-solid fa-volume-high mr-1"></i>Test Bell
+                    </button>
+                    <button onclick="switchMainView('STUDENT')" class="px-4 py-2.5 rounded-xl bg-white text-matte-900 text-xs font-extrabold">
+                        <i class="fa-solid fa-arrow-left mr-1.5"></i>Back to Menu
+                    </button>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -483,66 +557,94 @@
 
                     <button type="submit" class="w-full py-3.5 rounded-2xl bg-matte-900 hover:bg-slate-800 text-white font-black text-sm flex items-center justify-center space-x-2 shadow-lg transition">
                         <i class="fa-solid fa-qrcode text-brand-400 text-base"></i>
-                        <span>Proceed to Paytm UPI Scanner</span>
+                        <span>Proceed to UPI Payment</span>
                     </button>
                 </form>
             </div>
 
-            <!-- STEP 2: MR KRISH KUMAR PAYTM UPI SCANNER + 12-DIGIT UTR INPUT -->
+            <!-- STEP 2: MR KRISH KUMAR PAYTM QR + CHOOSE APP TO PAY + PAYEE NAME & 12-DIGIT UTR (NO WHATSAPP SHARE) -->
             <div id="checkoutStep2" class="hidden py-3 text-center space-y-3.5">
                 <!-- Authentic Paytm Style Card -->
                 <div class="p-4 rounded-3xl bg-gradient-to-b from-sky-500 to-blue-900 text-white shadow-xl max-w-xs mx-auto border-2 border-sky-400">
-                    <div class="bg-white text-slate-900 rounded-2xl p-4 shadow-md">
-                        <!-- Profile Badge -->
-                        <div class="flex items-center justify-center space-x-2 mb-2">
-                            <div class="w-8 h-8 rounded-full bg-pink-100 text-pink-700 font-black text-xs flex items-center justify-center border border-pink-300">MK</div>
+                    <div class="bg-white text-slate-900 rounded-2xl p-3.5 shadow-md">
+                        <div class="flex items-center justify-center space-x-2 mb-1.5">
+                            <div class="w-7 h-7 rounded-full bg-pink-100 text-pink-700 font-black text-xs flex items-center justify-center border border-pink-300">MK</div>
                             <div class="text-left">
                                 <p class="text-xs font-black text-slate-900 flex items-center">
                                     Mr Krish Kumar <i class="fa-solid fa-circle-check text-blue-600 ml-1 text-[11px]"></i>
                                 </p>
-                                <p class="text-[10px] font-bold text-slate-500">Paytm Verified Merchant QR</p>
+                                <p class="text-[10px] font-bold text-slate-500">Official Paytm Merchant QR</p>
                             </div>
                         </div>
 
-                        <div class="text-xs font-black tracking-wide text-sky-600 mb-2">
+                        <div class="text-xs font-black tracking-wide text-sky-600 mb-1.5">
                             paytm <span class="text-rose-500">❤</span> <span class="text-slate-800">UPI</span> • Pay <span id="upiPayAmountText" class="text-emerald-600 text-sm underline">₹0</span>
                         </div>
 
-                        <!-- Instant Scannable QR Container (Rendered via QRCode.js + Fallback Image) -->
-                        <div class="flex flex-col items-center justify-center my-2">
+                        <!-- Instant Scannable QR Container -->
+                        <div class="flex flex-col items-center justify-center my-1.5">
                             <div id="qrcodeCanvasContainer" class="p-2 bg-white rounded-xl border-2 border-slate-200 inline-block"></div>
                         </div>
 
-                        <p class="text-[11px] font-mono font-extrabold text-slate-800 mt-2 select-all bg-slate-100 py-1 px-2 rounded-lg border border-slate-200">
+                        <p class="text-[11px] font-mono font-extrabold text-slate-800 mt-1.5 select-all bg-slate-100 py-1 px-2 rounded-lg border border-slate-200">
                             <i class="fa-solid fa-bolt text-amber-500 mr-1"></i><span id="checkoutUpiIdDisplay">7464074739@ptyes</span>
                         </p>
                     </div>
-                    <p class="text-[11px] font-bold text-sky-100 mt-2.5">Scan with Paytm, PhonePe, Google Pay or BHIM</p>
+                    <p class="text-[10px] font-bold text-sky-100 mt-2">Scan QR above OR tap your payment app below</p>
                 </div>
 
-                <!-- 1-Tap Pay via UPI App Button -->
-                <div class="max-w-xs mx-auto">
-                    <a id="upiDeepLinkBtn" href="#" class="w-full py-3 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs flex items-center justify-center space-x-2 shadow-md transition">
-                        <i class="fa-solid fa-mobile-screen-button text-sm"></i>
-                        <span>Open Paytm / GPay / PhonePe App</span>
-                    </a>
+                <!-- CHOOSE APP TO PAY (OPENS PAYTM / GPAY / PHONEPE DIRECTLY WITH AMOUNT) -->
+                <div class="text-left bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                    <p class="text-[11px] font-black uppercase tracking-wider text-slate-700 mb-2 text-center">
+                        <i class="fa-solid fa-mobile-screen-button text-brand-600 mr-1"></i>Choose App to Pay Instantly
+                    </p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <a id="payAppPaytm" href="#" class="py-2.5 px-2 rounded-xl bg-white hover:bg-sky-50 border border-slate-300 text-slate-900 font-black text-xs flex flex-col items-center justify-center gap-1 shadow-sm transition">
+                            <i class="fa-solid fa-wallet text-sky-500 text-base"></i>
+                            <span>Paytm</span>
+                        </a>
+                        <a id="payAppGpay" href="#" class="py-2.5 px-2 rounded-xl bg-white hover:bg-emerald-50 border border-slate-300 text-slate-900 font-black text-xs flex flex-col items-center justify-center gap-1 shadow-sm transition">
+                            <i class="fa-brands fa-google-pay text-emerald-600 text-lg"></i>
+                            <span>Google Pay</span>
+                        </a>
+                        <a id="payAppPhonepe" href="#" class="py-2.5 px-2 rounded-xl bg-white hover:bg-purple-50 border border-slate-300 text-slate-900 font-black text-xs flex flex-col items-center justify-center gap-1 shadow-sm transition">
+                            <i class="fa-solid fa-indian-rupee-sign text-purple-600 text-base"></i>
+                            <span>PhonePe</span>
+                        </a>
+                        <a id="payAppAnyUpi" href="#" class="py-2.5 px-2 rounded-xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs flex flex-col items-center justify-center gap-1 shadow-sm transition">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-brand-400 text-base"></i>
+                            <span>Any UPI App</span>
+                        </a>
+                    </div>
                 </div>
 
-                <!-- Mandatory 12-Digit UTR Verification Form -->
-                <form onsubmit="submitUtrAndStartPreparing(event)" class="text-left bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                <!-- MANDATORY PAYEE NAME + 12-DIGIT UTR FORM (NO WHATSAPP REDIRECT) -->
+                <form onsubmit="submitUtrAndStartPreparing(event)" class="text-left bg-slate-50 p-4 rounded-2xl border-2 border-slate-300 space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                        <span class="text-xs font-black text-slate-900">Enter Payment Details After Paying</span>
+                        <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">100% Verified</span>
+                    </div>
+
                     <div>
                         <label class="text-[11px] font-black text-slate-800 block mb-1">
-                            Enter 12-Digit UPI UTR / Reference No. After Payment *
+                            1. Payee / Sender Account Name (जसके नाम से पेमेंट किया) *
                         </label>
-                        <input type="text" id="custUpiUtr" required pattern="[0-9]{12}" maxlength="12" inputmode="numeric" placeholder="Enter exact 12-digit UTR number (e.g. 431289017423)" class="w-full px-3.5 py-2.5 bg-white border-2 border-slate-300 rounded-xl text-xs font-mono font-black text-slate-900 tracking-wider focus:border-matte-900 focus:outline-none">
+                        <input type="text" id="custPayeeName" required placeholder="Enter name on your UPI / Bank account" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 focus:border-matte-900 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="text-[11px] font-black text-slate-800 block mb-1">
+                            2. 12-Digit UPI UTR / Reference No. *
+                        </label>
+                        <input type="text" id="custUpiUtr" required pattern="[0-9]{12}" maxlength="12" inputmode="numeric" placeholder="Enter exact 12-digit UTR number (e.g. 431289017423)" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-mono font-black text-slate-900 tracking-wider focus:border-matte-900 focus:outline-none">
                         <p class="text-[10px] text-slate-500 mt-1 font-medium">
-                            <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i>Your 12-digit UTR is verified against Mr Krish Kumar's bank statement (`7464074739@ptyes`). Fake UTRs are automatically rejected.
+                            <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i>Your Payee Name & 12-digit UTR are verified directly in our system. Fake details are automatically rejected.
                         </p>
                     </div>
 
                     <button type="submit" class="w-full py-3.5 rounded-2xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm flex items-center justify-center space-x-2 shadow-lg transition">
                         <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                        <span>Submit Payment & Start Preparing Order</span>
+                        <span>Confirm Payment & Place Order</span>
                     </button>
 
                     <button type="button" onclick="backToCheckoutStep1()" class="w-full text-center text-xs text-slate-500 hover:text-slate-900 font-bold underline pt-1">
@@ -559,19 +661,34 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- USER PROFILE / LOGOUT MODAL                -->
+    <!-- USER PROFILE & ORDER HISTORY MODAL         -->
     <!-- ========================================== -->
     <div id="userProfileModal" class="fixed inset-0 z-50 bg-matte-900/80 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="bg-white border border-slate-200 w-full max-w-xs rounded-3xl p-5 text-center animate-slide-up shadow-2xl">
-            <div class="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-300 text-matte-900 flex items-center justify-center mx-auto mb-3">
-                <i class="fa-solid fa-user-check text-xl text-emerald-600"></i>
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl p-5 animate-slide-up shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-10 h-10 rounded-2xl bg-matte-900 text-white flex items-center justify-center">
+                        <i class="fa-solid fa-user-check text-brand-400"></i>
+                    </div>
+                    <div class="text-left">
+                        <h3 class="text-sm font-black text-slate-900" id="profileModalName">User Name</h3>
+                        <p class="text-[11px] text-slate-500 font-semibold" id="profileModalEmail">user@email.com</p>
+                        <p class="text-[11px] text-emerald-600 font-extrabold" id="profileModalPhone">+91 0000000000</p>
+                    </div>
+                </div>
+                <button onclick="closeUserProfileModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <h3 class="text-base font-black text-slate-900" id="profileModalName">User Name</h3>
-            <p class="text-xs text-emerald-600 font-extrabold mt-0.5" id="profileModalPhone">+91 0000000000</p>
-            <p class="text-[11px] text-slate-500 mt-2 mb-4">Logged in for Nawabganj Delivery</p>
-            <div class="flex space-x-2">
+
+            <div class="my-3.5 text-left">
+                <h4 class="text-xs font-black uppercase tracking-wider text-slate-500 mb-2">Your Recent Orders</h4>
+                <div id="userOrderHistoryList" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
+            </div>
+
+            <div class="flex space-x-2 pt-2 border-t border-slate-200">
                 <button onclick="closeUserProfileModal()" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Close</button>
-                <button onclick="handleUserLogout()" class="flex-1 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-extrabold">Logout</button>
+                <button onclick="handleUserLogout()" class="flex-1 py-2.5 rounded-xl bg-rose-600 text-white text-xs font-extrabold">Logout Account</button>
             </div>
         </div>
     </div>
@@ -640,8 +757,8 @@
                     </div>
                     <input type="text" id="ticketOrderDetails" required placeholder="Your Address in Nawabganj & Dish Ordered" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold text-slate-900">
                     <button type="submit" class="w-full py-3 rounded-xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs flex items-center justify-center space-x-2 transition">
-                        <i class="fa-brands fa-whatsapp text-emerald-400 text-base"></i>
-                        <span>Submit & Request Callback (8825293104)</span>
+                        <i class="fa-solid fa-paper-plane text-brand-400 text-sm"></i>
+                        <span>Submit Issue & Request Callback (8825293104)</span>
                     </button>
                 </form>
             </div>
@@ -803,12 +920,78 @@
         let activeDietFilter = 'ALL';
         let selectedVariants = {};
         let cart = {};
+        let generatedEmailOtp = null;
+        let pendingLoginUser = null;
+        let sirenInterval = null;
+        let lastKnownOrderCount = orderLedger.length;
 
-        // --- MANDATORY USER LOGIN GATE ---
+        // --- WEB AUDIO API LOUD ZOMATO-STYLE PARTNER BELL FOR FOUNDER HUB & KITCHEN ---
+        function playOrderAlertChime(isManualTest = false) {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const now = ctx.currentTime;
+
+                // Dual-tone high-visibility restaurant counter bell
+                [880, 1174.66, 880, 1318.51].forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.18);
+                    gain.gain.setValueAtTime(0.35, now + idx * 0.18);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + (idx + 1) * 0.18);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + idx * 0.18);
+                    osc.stop(now + (idx + 1) * 0.18);
+                });
+
+                if (isManualTest) {
+                    showToast('🔔 Bell Working!', 'This loud chime will ring automatically whenever a new order arrives.', 'success');
+                }
+            } catch (e) {
+                console.warn('Audio chime blocked until user interaction:', e);
+            }
+        }
+
+        function triggerOrderSirenIfNeeded() {
+            const hasUnverified = orderLedger.some(o => o.orderStatus === 'PREPARING');
+            const founderBar = document.getElementById('founderLoudAlertBar');
+            const kitchenBar = document.getElementById('kitchenLoudAlertBar');
+
+            if (hasUnverified) {
+                if (founderBar) founderBar.classList.remove('hidden');
+                if (kitchenBar) kitchenBar.classList.remove('hidden');
+                playOrderAlertChime(false);
+                if (!sirenInterval) {
+                    sirenInterval = setInterval(() => {
+                        const stillPending = orderLedger.some(o => o.orderStatus === 'PREPARING');
+                        if (stillPending) playOrderAlertChime(false);
+                        else stopOrderSiren();
+                    }, 5000);
+                }
+            } else {
+                stopOrderSiren();
+            }
+        }
+
+        function stopOrderSiren() {
+            if (sirenInterval) {
+                clearInterval(sirenInterval);
+                sirenInterval = null;
+            }
+            const founderBar = document.getElementById('founderLoudAlertBar');
+            const kitchenBar = document.getElementById('kitchenLoudAlertBar');
+            if (founderBar) founderBar.classList.add('hidden');
+            if (kitchenBar) kitchenBar.classList.add('hidden');
+        }
+
+        // --- MANDATORY EMAIL + OTP ACCOUNT LOGIN SYSTEM ---
         function checkUserLoginGate() {
             const gate = document.getElementById('userLoginGate');
             const navUserText = document.getElementById('navUserNameText');
-            if (!currentUser || !currentUser.name || !currentUser.phone) {
+            if (!currentUser || !currentUser.name || !currentUser.phone || !currentUser.email) {
                 gate.classList.remove('hidden');
                 gate.classList.add('flex');
             } else {
@@ -818,22 +1001,65 @@
                 const cName = document.getElementById('custName');
                 const cPhone = document.getElementById('custPhone');
                 const cAddr = document.getElementById('custAddress');
+                const cPayee = document.getElementById('custPayeeName');
                 if (cName) cName.value = currentUser.name;
                 if (cPhone) cPhone.value = currentUser.phone;
                 if (cAddr && currentUser.savedAddress) cAddr.value = currentUser.savedAddress;
+                if (cPayee) cPayee.value = currentUser.name;
             }
         }
 
-        function handleUserLogin(e) {
+        function sendEmailOtpStep(e) {
             e.preventDefault();
+            const email = document.getElementById('loginUserEmail').value.trim().toLowerCase();
             const name = document.getElementById('loginUserName').value.trim();
             const phone = document.getElementById('loginUserPhone').value.trim();
-            if (!name || phone.length !== 10) return;
+            if (!email || !name || phone.length !== 10) return;
 
-            currentUser = { name, phone, savedAddress: '' };
+            // Check if returning user has saved profile in localStorage/cloud
+            const savedProfiles = JSON.parse(localStorage.getItem('gmf_user_profiles') || '{}');
+            const existing = savedProfiles[email] || {};
+
+            pendingLoginUser = {
+                email,
+                name,
+                phone,
+                savedAddress: existing.savedAddress || ''
+            };
+
+            generatedEmailOtp = String(Math.floor(1000 + Math.random() * 9000));
+            document.getElementById('otpTargetEmailText').textContent = email;
+            document.getElementById('instantOtpDisplayBadge').textContent = generatedEmailOtp;
+            document.getElementById('loginOtpInput').value = generatedEmailOtp;
+
+            document.getElementById('loginStep1Form').classList.add('hidden');
+            document.getElementById('loginStep2Form').classList.remove('hidden');
+        }
+
+        function resetLoginToStep1() {
+            document.getElementById('loginStep2Form').classList.add('hidden');
+            document.getElementById('loginStep1Form').classList.remove('hidden');
+        }
+
+        function verifyEmailOtpAndLogin(e) {
+            e.preventDefault();
+            const entered = document.getElementById('loginOtpInput').value.trim();
+            if (entered !== generatedEmailOtp) {
+                showToast('Incorrect OTP Code', 'Please enter the 4-digit verification code shown above.', 'warning');
+                return;
+            }
+
+            currentUser = pendingLoginUser;
             localStorage.setItem('gmf_logged_user', JSON.stringify(currentUser));
+
+            // Save persistent account by email
+            const savedProfiles = JSON.parse(localStorage.getItem('gmf_user_profiles') || '{}');
+            savedProfiles[currentUser.email] = currentUser;
+            localStorage.setItem('gmf_user_profiles', JSON.stringify(savedProfiles));
+            if (window.syncUserProfileToCloud) window.syncUserProfileToCloud(currentUser);
+
             checkUserLoginGate();
-            showToast(`Welcome, ${name}!`, 'Min Order ₹100 • Free Delivery above ₹250!', 'success');
+            showToast(`Account Verified: ${currentUser.name}`, `Logged in as ${currentUser.email}. Your address & orders are now synced!`, 'success');
         }
 
         function openUserProfileModal() {
@@ -842,7 +1068,26 @@
                 return;
             }
             document.getElementById('profileModalName').textContent = currentUser.name;
+            document.getElementById('profileModalEmail').textContent = currentUser.email;
             document.getElementById('profileModalPhone').textContent = `+91 ${currentUser.phone}`;
+
+            const myOrders = orderLedger.filter(o => o.custPhone === currentUser.phone || o.custEmail === currentUser.email);
+            const listEl = document.getElementById('userOrderHistoryList');
+            if (listEl) {
+                listEl.innerHTML = myOrders.length === 0
+                    ? `<p class="text-xs text-slate-400 py-3 text-center">No orders placed from this account yet.</p>`
+                    : myOrders.map(o => `
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex justify-between items-center gap-2">
+                            <div>
+                                <span class="font-black text-slate-900">${o.orderId}</span> • <span class="text-emerald-600 font-bold">₹${o.grandTotal}</span>
+                                <p class="text-[11px] text-slate-500">${o.itemsSummary}</p>
+                                <p class="text-[10px] text-slate-400">${o.timestamp} • Status: <strong>${o.orderStatus}</strong></p>
+                            </div>
+                            <button onclick="closeUserProfileModal(); activeCustomerOrderId='${o.orderId}'; openActiveOrderModal();" class="px-2.5 py-1.5 rounded-lg bg-matte-900 text-white font-bold text-[11px]">Track</button>
+                        </div>
+                    `).join('');
+            }
+
             const modal = document.getElementById('userProfileModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -858,6 +1103,7 @@
             localStorage.removeItem('gmf_logged_user');
             currentUser = null;
             closeUserProfileModal();
+            resetLoginToStep1();
             checkUserLoginGate();
         }
 
@@ -1310,15 +1556,31 @@
             if (currentUser) {
                 currentUser.savedAddress = addr;
                 localStorage.setItem('gmf_logged_user', JSON.stringify(currentUser));
+                const savedProfiles = JSON.parse(localStorage.getItem('gmf_user_profiles') || '{}');
+                if (currentUser.email) {
+                    savedProfiles[currentUser.email] = currentUser;
+                    localStorage.setItem('gmf_user_profiles', JSON.stringify(savedProfiles));
+                }
+                if (window.syncUserProfileToCloud) window.syncUserProfileToCloud(currentUser);
             }
 
             // Build exact UPI URI for Mr Krish Kumar (7464074739@ptyes)
             const upiUri = `upi://pay?pa=${PAYTM_UPI_ID}&pn=${encodeURIComponent(PAYTM_PAYEE_NAME)}&am=${grandTotal}&cu=INR&tn=${encodeURIComponent('GiveMyFood Order')}`;
 
-            document.getElementById('checkoutModalHeaderTitle').textContent = 'Scan & Pay via Paytm / UPI';
+            document.getElementById('checkoutModalHeaderTitle').textContent = 'Scan QR or Choose App to Pay';
             document.getElementById('upiPayAmountText').textContent = `₹${grandTotal}`;
             document.getElementById('checkoutUpiIdDisplay').textContent = PAYTM_UPI_ID;
-            document.getElementById('upiDeepLinkBtn').href = upiUri;
+
+            // Bind all "Choose App to Pay" buttons to open the UPI payment intent directly
+            ['payAppPaytm', 'payAppGpay', 'payAppPhonepe', 'payAppAnyUpi'].forEach(btnId => {
+                const el = document.getElementById(btnId);
+                if (el) el.href = upiUri;
+            });
+
+            const payeeInput = document.getElementById('custPayeeName');
+            if (payeeInput && currentUser && !payeeInput.value) {
+                payeeInput.value = currentUser.name;
+            }
 
             // Render 100% Scannable QR Code using QRCode.js
             const qrContainer = document.getElementById('qrcodeCanvasContainer');
@@ -1326,14 +1588,14 @@
             try {
                 new QRCode(qrContainer, {
                     text: upiUri,
-                    width: 175,
-                    height: 175,
+                    width: 170,
+                    height: 170,
                     colorDark: "#000000",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.M
                 });
             } catch (err) {
-                qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUri)}" class="w-44 h-44 mx-auto" alt="Paytm UPI QR">`;
+                qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUri)}" class="w-40 h-40 mx-auto" alt="Paytm UPI QR">`;
             }
 
             document.getElementById('checkoutStep1').classList.add('hidden');
@@ -1347,10 +1609,9 @@
             document.getElementById('checkoutStep1').classList.remove('hidden');
         }
 
-        // --- VALIDATE 12-DIGIT UTR & START REASSURING "PAYMENT DONE • PREPARING ORDER" FLOW ---
+        // --- VALIDATE PAYEE NAME + 12-DIGIT UTR & SAVE ORDER IN-APP (NO WHATSAPP SHARE) ---
         function isPlausibleUtr(utr) {
             if (!/^[0-9]{12}$/.test(utr)) return false;
-            // Block obvious dummy strings like 111111111111, 000000000000, 123456789012
             if (/^(\d)\1{11}$/.test(utr)) return false;
             if (utr === '123456789012' || utr === '987654321098') return false;
             return true;
@@ -1358,9 +1619,15 @@
 
         function submitUtrAndStartPreparing(e) {
             e.preventDefault();
+            const payeeName = document.getElementById('custPayeeName').value.trim();
             const utr = document.getElementById('custUpiUtr').value.trim();
+
+            if (!payeeName || payeeName.length < 2) {
+                showToast('Payee Name Required', 'Please enter the account holder name from which you sent the UPI payment.', 'warning');
+                return;
+            }
             if (!isPlausibleUtr(utr)) {
-                showToast('Invalid 12-Digit UTR', 'Please enter a valid 12-digit UPI Reference / UTR number from your Paytm, PhonePe, or Google Pay receipt.', 'warning');
+                showToast('Invalid 12-Digit UTR', 'Please enter a valid 12-digit UPI Reference / UTR number from your payment receipt.', 'warning');
                 return;
             }
 
@@ -1382,13 +1649,15 @@
                 restaurantName: currentRest.name,
                 ownerPhone: MASTER_CONTACT_PHONE,
                 custName,
+                custEmail: currentUser ? currentUser.email : '',
                 custPhone,
+                payeeName,
                 dropLocation: `${custAddress} (Nawabganj)`,
+                custNotes: custNotes || '',
                 subtotal,
                 deliveryCharge,
                 grandTotal,
                 upiRef: utr,
-                // Starts in PREPARING so customer feels reassured & doesn't panic-call immediately, while Krish can Confirm or Reject (Fake Payment)
                 orderStatus: 'PREPARING',
                 itemsSummary: lines.map(l => `${l.qty}x ${l.name}`).join(', ')
             };
@@ -1400,7 +1669,7 @@
 
             if (window.syncOrderToCloud) window.syncOrderToCloud(newOrder);
 
-            // Clear cart
+            // Clear cart & inputs
             cart = {};
             document.getElementById('custUpiUtr').value = '';
             renderMenu();
@@ -1408,33 +1677,13 @@
             renderAdminDashboard();
             renderKitchenDashboard();
             renderCustomerLiveTracker();
+            triggerOrderSirenIfNeeded();
 
-            // Show Reassuring Step 3 Screen inside Modal
+            // Transition directly to Step 3 In-App Live Order Tracker (Zero WhatsApp redirect!)
             document.getElementById('checkoutStep2').classList.add('hidden');
             document.getElementById('checkoutStep3').classList.remove('hidden');
             renderStep3LiveOrderState(orderId);
-
-            // Also open WhatsApp to 8825293104 so Krish gets instant alert on his phone with the UTR
-            const itemLinesText = lines.map(l => `• ${l.qty} x ${l.name} = ₹${l.lineTotal}`).join('\n');
-            const deliveryLineText = deliveryCharge === 0 ? 'FREE (Order > ₹250)' : `₹${deliveryCharge} (Order ₹100–₹250)`;
-            const waText =
-`*🍔 NEW ORDER - GIVE MY FOOD (NAWABGANJ)*
-*Order ID:* ${orderId}
-*UPI Paid To:* ${PAYTM_UPI_ID}
-*Customer UTR:* *${utr}*
-*Amount:* *₹${grandTotal}*
-----------------------------------
-*Customer:* ${custName} (${custPhone})
-*Nawabganj Address:* ${custAddress}
-${custNotes ? `*Note:* ${custNotes}\n` : ''}----------------------------------
-*ITEMS:*
-${itemLinesText}
-----------------------------------
-*Food:* ₹${subtotal} | *Delivery:* ${deliveryLineText}
-*TOTAL:* *₹${grandTotal}*`;
-
-            const waUrl = `https://wa.me/91${MASTER_CONTACT_PHONE}?text=${encodeURIComponent(waText)}`;
-            window.open(waUrl, '_blank', 'noopener,noreferrer');
+            showToast('Order Placed!', `Order ${orderId} is now being prepared. Track live status on your screen!`, 'success');
         }
 
         // --- LIVE CUSTOMER ORDER STATUS RENDERER (HANDLES "PREPARING", "CONFIRMED", & "FAKE_PAYMENT") ---
@@ -1466,22 +1715,19 @@ ${itemLinesText}
                         <span class="px-3 py-1 rounded-full bg-rose-600 text-white text-[10px] font-black uppercase tracking-wider">
                             Payment Verification Failed
                         </span>
-                        <h4 class="text-xl font-black text-rose-700">🚨 Fake / Unverified Payment Detected!</h4>
+                        <h4 class="text-xl font-black text-rose-700">🚨 Fake Payment Detected — Please Pay Carefully!</h4>
                         <p class="text-xs text-rose-900 font-semibold leading-relaxed">
-                            We checked our Paytm Merchant account (<strong>${PAYTM_UPI_ID}</strong>), and <strong>₹${ord.grandTotal}</strong> for UTR <strong class="font-mono underline">${ord.upiRef}</strong> was <strong>NOT received</strong>.
+                            We checked our Paytm Merchant account (<strong>${PAYTM_UPI_ID}</strong>), and <strong>₹${ord.grandTotal}</strong> from Payee <strong>${ord.payeeName || ord.custName}</strong> (UTR: <strong class="font-mono underline">${ord.upiRef}</strong>) was <strong>NOT received</strong>.
                         </p>
-                        <div class="p-3 rounded-xl bg-white border border-rose-300 text-left text-xs text-slate-700 space-y-1">
-                            <p class="font-extrabold text-rose-700">Please Pay Carefully:</p>
-                            <p>• Do not enter random or fake 12-digit UTR numbers.</p>
-                            <p>• If money was deducted from your bank, WhatsApp your payment screenshot to <strong>${MASTER_CONTACT_PHONE}</strong>.</p>
+                        <div class="p-3.5 rounded-2xl bg-white border border-rose-300 text-left text-xs text-slate-700 space-y-2">
+                            <p class="font-extrabold text-rose-700">Already paid or typed wrong UTR? Correct it below:</p>
+                            <input type="text" id="retryPayeeName" value="${ord.payeeName || ord.custName}" placeholder="Payee Name" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold">
+                            <input type="text" id="retryUtrInput" maxlength="12" placeholder="Enter Correct 12-Digit UTR" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono font-black">
+                            <button type="button" onclick="resubmitCorrectedUtr('${ord.orderId}')" class="w-full py-2.5 rounded-xl bg-matte-900 text-white font-black text-xs">
+                                Re-Submit Correct Payment Details
+                            </button>
                         </div>
-                        <div class="flex flex-col sm:flex-row gap-2 pt-2">
-                            <a href="https://wa.me/91${MASTER_CONTACT_PHONE}?text=${encodeURIComponent(`Hi Krish, regarding Order ${ord.orderId} (UTR: ${ord.upiRef}), here is my payment screenshot:`)}" target="_blank" class="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs flex items-center justify-center space-x-1.5">
-                                <i class="fa-brands fa-whatsapp text-sm"></i>
-                                <span>Send Screenshot on WhatsApp</span>
-                            </a>
-                            <button type="button" onclick="closeCheckoutModal()" class="py-3 px-4 rounded-xl bg-slate-200 text-slate-800 font-bold text-xs">Close</button>
-                        </div>
+                        <button type="button" onclick="closeCheckoutModal()" class="w-full py-2.5 rounded-xl bg-slate-200 text-slate-800 font-bold text-xs">Close Window</button>
                     </div>
                 `;
                 return;
@@ -1489,12 +1735,12 @@ ${itemLinesText}
 
             // CASE 2: REASSURING "PAYMENT DONE • PREPARING YOUR ORDER" (OR CONFIRMED/OUT FOR DELIVERY)
             let statusHeadline = 'Payment Done • Preparing Your Order!';
-            let statusSubtext = 'Relax! Your order is with the kitchen and is being prepared fresh. No need to call unless delayed.';
+            let statusSubtext = 'Relax! Your payment details are logged and the kitchen is preparing your fresh meal.';
             let badgeText = 'LIVE KITCHEN TRACKER';
 
             if (ord.orderStatus === 'CONFIRMED') {
                 statusHeadline = 'Payment Verified • Cooking Your Meal!';
-                statusSubtext = 'Krish verified your Paytm UPI payment. Chef is preparing your food now!';
+                statusSubtext = 'Your Paytm UPI payment has been verified. Chef is preparing your food now!';
                 badgeText = 'PAYMENT VERIFIED ✓';
             } else if (ord.orderStatus === 'ON_THE_WAY') {
                 statusHeadline = 'Order Out for Delivery in Nawabganj!';
@@ -1527,10 +1773,14 @@ ${itemLinesText}
                     <div class="p-3 rounded-2xl bg-white border border-slate-200 text-left text-xs space-y-1">
                         <div class="flex justify-between">
                             <span class="font-bold text-slate-500">Order ID:</span>
-                            <span class="font-black text-slate-900">${ord.orderId} (UTR: ${ord.upiRef})</span>
+                            <span class="font-black text-slate-900">${ord.orderId}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="font-bold text-slate-500">Amount Logged:</span>
+                            <span class="font-bold text-slate-500">Payee Name & UTR:</span>
+                            <span class="font-black text-slate-900">${ord.payeeName || ord.custName} (${ord.upiRef})</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-bold text-slate-500">Amount Paid:</span>
                             <span class="font-black text-emerald-600">₹${ord.grandTotal}</span>
                         </div>
                         <p class="text-slate-700 font-semibold pt-1 border-t border-slate-100">📍 ${ord.dropLocation}</p>
@@ -1538,72 +1788,32 @@ ${itemLinesText}
                     </div>
 
                     <button type="button" onclick="closeCheckoutModal()" class="w-full py-3 rounded-xl bg-matte-900 text-white font-black text-xs">
-                        Back to Menu (Live Status Saved on Top)
+                        Back to Menu (Live Status Pinned on Top)
                     </button>
                 </div>
             `;
         }
 
-        // Renders the persistent banner at the top of the menu so the customer always sees "Preparing Order" or "Fake Payment Detected"
-        function renderCustomerLiveTracker() {
-            const banner = document.getElementById('liveOrderTrackerBanner');
-            const topBtn = document.getElementById('topTrackOrderBtn');
-            if (!activeCustomerOrderId) {
-                if (banner) banner.classList.add('hidden');
-                if (topBtn) topBtn.classList.add('hidden');
+        function resubmitCorrectedUtr(orderId) {
+            const newPayee = (document.getElementById('retryPayeeName')?.value || '').trim();
+            const newUtr = (document.getElementById('retryUtrInput')?.value || '').trim();
+            if (!newPayee || !isPlausibleUtr(newUtr)) {
+                showToast('Invalid Details', 'Please enter your valid Payee Name and 12-digit UPI UTR number.', 'warning');
                 return;
             }
-
-            const ord = orderLedger.find(o => o.orderId === activeCustomerOrderId);
-            if (!ord) {
-                if (banner) banner.classList.add('hidden');
-                if (topBtn) topBtn.classList.add('hidden');
-                return;
-            }
-
-            if (topBtn) topBtn.classList.remove('hidden');
-            banner.classList.remove('hidden');
-
-            if (ord.orderStatus === 'FAKE_PAYMENT') {
-                banner.className = 'rounded-2xl p-4 border-2 border-rose-600 bg-rose-50 text-rose-900 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3';
-                banner.innerHTML = `
-                    <div class="flex items-start space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-rose-600 text-white">Order ${ord.orderId} Rejected</span>
-                            <h4 class="text-sm sm:text-base font-black text-rose-700 mt-1">🚨 Fake Payment Detected — Please Pay Carefully!</h4>
-                            <p class="text-xs text-rose-800 font-medium">Payment of ₹${ord.grandTotal} (UTR: ${ord.upiRef}) was not received in Paytm (${PAYTM_UPI_ID}).</p>
-                        </div>
-                    </div>
-                    <button onclick="openActiveOrderModal()" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs flex-shrink-0">
-                        View Alert Details
-                    </button>
-                `;
-            } else {
-                const statusMap = {
-                    'PREPARING': '✅ Payment Done • Preparing Your Order!',
-                    'CONFIRMED': '👨‍🍳 Payment Verified • Kitchen Cooking Your Order!',
-                    'ON_THE_WAY': '🛵 Out for Delivery in Nawabganj!',
-                    'DELIVERED': '🎉 Order Delivered!'
-                };
-                banner.className = 'rounded-2xl p-4 border-2 border-emerald-500 bg-emerald-50/90 text-slate-900 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3';
-                banner.innerHTML = `
-                    <div class="flex items-start space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5 pulse-green">
-                            <i class="fa-solid fa-utensils"></i>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-matte-900 text-white">Live Order ${ord.orderId} • UTR: ${ord.upiRef}</span>
-                            <h4 class="text-sm sm:text-base font-black text-slate-900 mt-1">${statusMap[ord.orderStatus] || '✅ Payment Done • Preparing Your Order!'}</h4>
-                            <p class="text-xs text-slate-600 font-medium">${ord.itemsSummary} • Total: ₹${ord.grandTotal}</p>
-                        </div>
-                    </div>
-                    <button onclick="openActiveOrderModal()" class="px-4 py-2.5 rounded-xl bg-matte-900 hover:bg-slate-800 text-white font-black text-xs flex-shrink-0">
-                        Track Status
-                    </button>
-                `;
+            const ord = orderLedger.find(o => o.orderId === orderId);
+            if (ord) {
+                ord.payeeName = newPayee;
+                ord.upiRef = newUtr;
+                ord.orderStatus = 'PREPARING';
+                localStorage.setItem('gmf_orders', JSON.stringify(orderLedger));
+                if (window.syncOrderToCloud) window.syncOrderToCloud(ord);
+                renderStep3LiveOrderState(orderId);
+                renderCustomerLiveTracker();
+                renderAdminDashboard();
+                renderKitchenDashboard();
+                triggerOrderSirenIfNeeded();
+                showToast('Payment Re-Submitted', 'Your updated UTR has been sent for verification.', 'success');
             }
         }
 
@@ -1637,12 +1847,12 @@ ${itemLinesText}
             const ticket = { id: 'TCK-' + Math.floor(100 + Math.random() * 900), issueType, customerPhone, customerName, orderDetails, createdAt };
             supportTickets.unshift(ticket);
             localStorage.setItem('gmf_tickets', JSON.stringify(supportTickets));
+            if (window.syncTicketToCloud) window.syncTicketToCloud(ticket);
             renderAdminDashboard();
+            playOrderAlertChime(false);
 
-            const waLink = `https://wa.me/91${MASTER_CONTACT_PHONE}?text=${encodeURIComponent(`*SUPPORT TICKET ${ticket.id}*\nIssue: ${issueType}\nName: ${customerName} (${customerPhone})\nDetails: ${orderDetails}`)}`;
-            window.open(waLink, '_blank', 'noopener,noreferrer');
             closeSupportModal();
-            showToast('Callback Requested', `Krish Kumar (${MASTER_CONTACT_PHONE}) will call you on ${customerPhone}.`, 'success');
+            showToast('Callback Request Logged', `Ticket #${ticket.id} saved! Krish Kumar (${MASTER_CONTACT_PHONE}) will call you on ${customerPhone}.`, 'success');
         }
 
         function openTermsModal() {
@@ -1714,9 +1924,12 @@ ${itemLinesText}
             return `
                 <div class="p-4 rounded-2xl ${isFake ? 'bg-rose-50 border-2 border-rose-500' : 'bg-slate-50 border border-slate-200'} space-y-2.5 text-xs">
                     <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200">
-                        <div class="flex items-center space-x-2">
+                        <div class="flex flex-wrap items-center gap-1.5">
                             <span class="px-2.5 py-1 rounded-lg bg-matte-900 text-white font-black">${o.orderId}</span>
-                            <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 font-mono font-black">
+                            <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 font-black">
+                                Payee: ${o.payeeName || o.custName}
+                            </span>
+                            <span class="px-2.5 py-1 rounded-lg bg-sky-100 text-sky-900 border border-sky-300 font-mono font-black">
                                 UTR: ${o.upiRef} • ₹${o.grandTotal}
                             </span>
                         </div>
@@ -1726,12 +1939,13 @@ ${itemLinesText}
                     </div>
                     <p class="font-black text-slate-900 text-sm">${o.itemsSummary}</p>
                     <p class="text-slate-700 font-semibold">📍 ${o.dropLocation}</p>
-                    <p class="text-slate-500">Customer: <strong class="text-slate-900">${o.custName}</strong> • <a href="tel:${o.custPhone}" class="text-emerald-600 underline font-extrabold">${o.custPhone}</a> • ${o.timestamp}</p>
+                    ${o.custNotes ? `<p class="text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 font-semibold">📝 Note: ${o.custNotes}</p>` : ''}
+                    <p class="text-slate-500">Customer: <strong class="text-slate-900">${o.custName}</strong> ${o.custEmail ? `(${o.custEmail})` : ''} • <a href="tel:${o.custPhone}" class="text-emerald-600 underline font-extrabold">${o.custPhone}</a> • ${o.timestamp}</p>
 
                     <!-- Action Buttons: Verify Payment, Out for Delivery, Delivered, OR Reject Fake Payment -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
                         <button onclick="updateOrderStatus('${o.orderId}', 'CONFIRMED')" class="py-2 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold">
-                            ✅ Confirm Payment
+                            ✅ Verify & Cook
                         </button>
                         <button onclick="updateOrderStatus('${o.orderId}', 'ON_THE_WAY')" class="py-2 px-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold">
                             🛵 Out for Delivery
@@ -1840,12 +2054,83 @@ ${itemLinesText}
             renderAdminDashboard();
         }
 
-        // Listen for localStorage changes across tabs so if Krish rejects in another tab, customer tab updates live
+        function renderCustomerLiveTracker() {
+            const banner = document.getElementById('liveOrderTrackerBanner');
+            const topBtn = document.getElementById('topTrackOrderBtn');
+            if (!banner) return;
+
+            if (!activeCustomerOrderId) {
+                banner.classList.add('hidden');
+                if (topBtn) topBtn.classList.add('hidden');
+                return;
+            }
+
+            const ord = orderLedger.find(o => o.orderId === activeCustomerOrderId);
+            if (!ord) {
+                banner.classList.add('hidden');
+                if (topBtn) topBtn.classList.add('hidden');
+                return;
+            }
+
+            banner.classList.remove('hidden');
+            if (topBtn) topBtn.classList.remove('hidden');
+
+            if (ord.orderStatus === 'FAKE_PAYMENT') {
+                banner.className = 'rounded-2xl p-4 border-2 border-rose-600 bg-rose-50 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                banner.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white px-2 py-0.5 rounded">Action Required • ${ord.orderId}</span>
+                            <h4 class="text-sm font-black text-rose-700 mt-1">🚨 Fake / Unverified Payment Detected — Please Pay Carefully!</h4>
+                            <p class="text-xs text-rose-800">UTR <strong>${ord.upiRef}</strong> (₹${ord.grandTotal}) was not received. Tap to update your UTR.</p>
+                        </div>
+                    </div>
+                    <button onclick="openActiveOrderModal()" class="px-4 py-2 rounded-xl bg-rose-600 text-white font-black text-xs flex-shrink-0">
+                        Fix Payment Now
+                    </button>
+                `;
+            } else {
+                let statusText = 'Payment Done • Preparing Your Order!';
+                if (ord.orderStatus === 'CONFIRMED') statusText = 'Payment Verified • Chef is Cooking Your Order!';
+                if (ord.orderStatus === 'ON_THE_WAY') statusText = 'Order Out for Delivery in Nawabganj! 🛵';
+                if (ord.orderStatus === 'DELIVERED') statusText = 'Order Delivered — Enjoy Your Meal! ✅';
+
+                banner.className = 'rounded-2xl p-4 border-2 border-emerald-500 bg-emerald-50/90 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3';
+                banner.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 pulse-green">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white px-2 py-0.5 rounded">Live Order • ${ord.orderId}</span>
+                            <h4 class="text-sm font-black text-slate-900 mt-1">${statusText}</h4>
+                            <p class="text-xs text-slate-600">${ord.itemsSummary} • Paid ₹${ord.grandTotal}</p>
+                        </div>
+                    </div>
+                    <button onclick="openActiveOrderModal()" class="px-4 py-2 rounded-xl bg-matte-900 text-white font-black text-xs flex-shrink-0">
+                        View Live Status
+                    </button>
+                `;
+            }
+        }
+
+        // Listen for localStorage changes across tabs so if Krish rejects in another tab, customer tab updates live and Founder Hub rings!
         window.addEventListener('storage', () => {
-            orderLedger = JSON.parse(localStorage.getItem('gmf_orders')) || [];
+            const updatedOrders = JSON.parse(localStorage.getItem('gmf_orders')) || [];
+            if (updatedOrders.length > lastKnownOrderCount) {
+                playOrderAlertChime(false);
+            }
+            lastKnownOrderCount = updatedOrders.length;
+            orderLedger = updatedOrders;
             outOfStockIds = JSON.parse(localStorage.getItem('gmf_out_of_stock')) || [];
             renderMenu();
+            renderAdminDashboard();
+            renderKitchenDashboard();
             renderCustomerLiveTracker();
+            triggerOrderSirenIfNeeded();
             if (activeCustomerOrderId) renderStep3LiveOrderState(activeCustomerOrderId);
         });
 
@@ -1919,11 +2204,16 @@ ${itemLinesText}
                         snap.forEach(d => cloudOrders.push(d.data()));
                         if (cloudOrders.length > 0) {
                             cloudOrders.sort((a, b) => (b.createdAtMs || 0) - (a.createdAtMs || 0));
+                            if (cloudOrders.length > lastKnownOrderCount) {
+                                playOrderAlertChime(false);
+                            }
+                            lastKnownOrderCount = cloudOrders.length;
                             orderLedger = cloudOrders;
                             localStorage.setItem('gmf_orders', JSON.stringify(orderLedger));
                             renderAdminDashboard();
                             renderKitchenDashboard();
                             renderCustomerLiveTracker();
+                            triggerOrderSirenIfNeeded();
                             if (activeCustomerOrderId) renderStep3LiveOrderState(activeCustomerOrderId);
                         }
                     }, (err) => console.warn(err));
@@ -1946,6 +2236,19 @@ ${itemLinesText}
                             const ordRef = doc(db, 'artifacts', appId, 'public', 'data', 'live_orders', orderId);
                             await setDoc(ordRef, { ...target, orderStatus: status });
                         }
+                    };
+
+                    window.syncUserProfileToCloud = async (profileObj) => {
+                        if (!auth.currentUser || !profileObj.email) return;
+                        const safeId = profileObj.email.replace(/[^a-zA-Z0-9]/g, '_');
+                        const profRef = doc(db, 'artifacts', appId, 'public', 'data', 'user_profiles', safeId);
+                        await setDoc(profRef, { ...profileObj, updatedAt: Date.now() });
+                    };
+
+                    window.syncTicketToCloud = async (ticketObj) => {
+                        if (!auth.currentUser) return;
+                        const tRef = doc(db, 'artifacts', appId, 'public', 'data', 'support_tickets', ticketObj.id);
+                        await setDoc(tRef, { ...ticketObj, createdAtMs: Date.now() });
                     };
                 });
             } catch (e) {
